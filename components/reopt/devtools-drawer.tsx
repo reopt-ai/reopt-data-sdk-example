@@ -12,6 +12,7 @@ import {
   TabPanel,
   TabsRoot,
 } from "@reopt-ai/opt-ui";
+import { RadioTower } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
 
 import { useClientSnapshot } from "@/lib/use-client-snapshot";
@@ -48,12 +49,13 @@ export function DevtoolsDrawer() {
   return (
     <>
       <Button
-        className="fixed right-4 bottom-4 z-30"
+        className="fixed right-3 bottom-3 z-30 rounded-full shadow-[var(--opt-shadow-md)] sm:right-4 sm:bottom-4"
         size="sm"
         onClick={() => setOpen(true)}
         data-testid="devtools-open"
       >
-        SDK devtools
+        <RadioTower className="size-4" aria-hidden="true" />
+        <span className="hidden sm:inline">SDK devtools</span>
         <Badge
           className="ml-2"
           variant={state.totals.failed > 0 ? "error" : "info"}

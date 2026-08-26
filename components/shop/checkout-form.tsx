@@ -44,9 +44,14 @@ export function CheckoutForm({ defaultEmail }: { defaultEmail: string }) {
 
   return (
     <Card>
-      <CardContent className="py-5">
+      <CardContent className="py-6 sm:p-8">
+        <h2 className="text-xl font-semibold">Contact and confirmation</h2>
+        <p className="mt-2 text-sm leading-6 text-text-secondary">
+          The confirmation path changes how the same trusted conversion reaches
+          the server.
+        </p>
         <form
-          className="flex flex-col gap-4"
+          className="mt-6 flex flex-col gap-5"
           action={(formData) => {
             track("checkout.submitted", { mode });
             if (mode === "server-action") {
@@ -88,26 +93,30 @@ export function CheckoutForm({ defaultEmail }: { defaultEmail: string }) {
             data-testid="email"
           />
 
-          <RadioGroup label="Confirmation path" value={mode} onChange={setMode}>
+          <RadioGroup
+            label="SDK confirmation path"
+            value={mode}
+            onChange={setMode}
+          >
             <Radio
               value="server-action"
-              label="Server Action — reads the verified device cookie"
+              label="Server Action — use the verified request cookie"
             />
             <Radio
               value="route-handler"
-              label="Route Handler — verifies an explicit deviceId handoff"
+              label="Route Handler — verify an explicit device ID handoff"
             />
           </RadioGroup>
 
-          <p className="text-xs text-text-secondary">
-            Device ID for this page:{" "}
+          <p className="rounded-[var(--opt-radius-sm)] bg-bg-subtle p-3 text-xs leading-5 text-text-secondary">
+            Analytics identity for this page:{" "}
             <code data-testid="checkout-device-id">
               {deviceId ?? "none (analytics disabled)"}
             </code>
           </p>
 
           <Button type="submit" loading={pending} data-testid="place-order">
-            Place order
+            Confirm demo order
           </Button>
         </form>
       </CardContent>

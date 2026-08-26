@@ -1,4 +1,4 @@
-import { Card, CardContent, PageHeader } from "@reopt-ai/opt-ui";
+import { Card, CardContent } from "@reopt-ai/opt-ui";
 import { cookies } from "next/headers";
 
 import { InstrumentationLab } from "@/components/reopt/instrumentation-lab";
@@ -18,14 +18,16 @@ export default async function LabPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <PageHeader
-        title="Instrumentation lab"
-        description={
-          showDiagnostics
+      <header className="max-w-3xl">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          Instrumentation lab
+        </h1>
+        <p className="mt-3 text-lg leading-8 text-text-secondary">
+          {showDiagnostics
             ? "Trigger automatic events on demand and inspect them in SDK devtools."
-            : "Trigger browser-side automatic events on demand. Server diagnostics are disabled in production."
-        }
-      />
+            : "Trigger browser-side automatic events on demand. Server diagnostics are disabled in production."}
+        </p>
+      </header>
 
       <InstrumentationLab
         exceptionsEnabled={flags.exceptions}
@@ -34,9 +36,9 @@ export default async function LabPage() {
 
       <WebVitalsTable />
 
-      <Card>
-        <CardContent className="flex flex-col gap-2 py-5 text-sm">
-          <h2 className="font-medium">Scroll depth</h2>
+      <Card className="bg-bg-subtle">
+        <CardContent className="flex flex-col gap-2 py-6 text-sm">
+          <h2 className="text-lg font-semibold">Scroll depth</h2>
           <p className="text-text-secondary">
             Scroll to the bottom and navigate elsewhere. This page's{" "}
             <code>$pageleave</code> event will include <code>scroll_depth</code>{" "}
@@ -48,7 +50,7 @@ export default async function LabPage() {
       {[1, 2, 3].map((index) => (
         <section
           key={index}
-          className="shop-tall-section rounded border border-border p-6"
+          className="shop-tall-section rounded-[var(--opt-radius-lg)] border border-border bg-gradient-to-b from-surface-raised to-bg-subtle p-6"
         >
           <h3 className="text-text-secondary">Scroll section {index} / 3</h3>
         </section>

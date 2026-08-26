@@ -5,10 +5,19 @@ A production-shaped Next.js reference application for
 and
 [`@reopt-ai/data-sdk-server`](https://www.npmjs.com/package/@reopt-ai/data-sdk-server).
 
-The storefront is deliberately small. Its purpose is to show how an application
-connects browser, server, proxy, consent, identity, and background-worker events
-to [data.reopt.ai](https://data.reopt.ai) without hiding the integration behind a
-demo-only abstraction.
+![Arc Supply storefront, the fictional commerce experience used by this example](./docs/screenshots/storefront-home.png)
+
+**Arc Supply** is the fictional workspace-goods storefront used by this
+example. It provides a complete, responsive shopping journey while the
+repository shows how an application connects browser, server, proxy, consent,
+identity, and background-worker events to
+[data.reopt.ai](https://data.reopt.ai) without hiding the integration behind a
+demo-only abstraction. Its products, accounts, and orders are illustrative and
+never represent real purchases.
+
+The Arc Supply name, catalogue, logo, and product photography were created
+solely for this example. They are not Reopt corporate brand assets and should
+not be reused to represent Reopt or a real merchant.
 
 ## Why this repository exists
 
@@ -282,6 +291,10 @@ pnpm check          # Prettier check, oxlint, and TypeScript
 pnpm e2e            # Playwright against the development server
 pnpm e2e:production # Playwright against a production build
 ```
+
+The Playwright suite also protects the storefront quality bar: generated-image
+loading, narrow-viewport overflow, keyboard access, and automated WCAG checks
+on the primary public routes run beside the SDK and security contracts.
 
 Set `SHOP_DEPLOYED_URL=https://...` and run `pnpm e2e:deployed` to exercise a
 deployed instance. When `.reopt-local.json` is absent, tests that require a real

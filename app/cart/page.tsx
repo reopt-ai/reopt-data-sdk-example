@@ -1,4 +1,4 @@
-import { Button, EmptyState, PageHeader, Separator } from "@reopt-ai/opt-ui";
+import { EmptyState } from "@reopt-ai/opt-ui";
 import Link from "next/link";
 
 import { CartLines } from "@/components/shop/cart-lines";
@@ -19,41 +19,67 @@ export default async function CartPage() {
       <div className="flex flex-col items-center gap-4">
         <EmptyState
           title="Your cart is empty"
-          description="Add a product to see a cart.added event in SDK devtools."
+          description="Choose a desk essential to begin the measured shopping journey."
         />
         <Link href="/products">
-          <Button variant="secondary">Browse products</Button>
+          <span className="store-button store-button-secondary">
+            Browse products
+          </span>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Cart"
-        description="Quantity changes send cart.updated; removals send cart.removed."
-      />
-      <CartLines
-        lines={lines.map((line) => ({
-          productId: line.productId,
-          name: line.product.name,
-          slug: line.product.slug,
-          category: line.product.category,
-          price: line.product.price,
-          quantity: line.quantity,
-          subtotal: line.subtotal,
-        }))}
-      />
-      <Separator />
-      <div className="flex items-center justify-end gap-6">
-        <span className="text-text-secondary">Total</span>
-        <span className="text-xl font-semibold" data-testid="cart-total">
-          {formatWon(total)}
-        </span>
-        <Link href="/checkout">
-          <Button data-testid="to-checkout">Checkout</Button>
-        </Link>
+    <div className="flex flex-col gap-8">
+      <header>
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          Your cart
+        </h1>
+        <p className="mt-3 text-text-secondary">
+          Review the collection before the server-confirmed checkout boundary.
+        </p>
+      </header>
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <CartLines
+          lines={lines.map((line) => ({
+            productId: line.productId,
+            name: line.product.name,
+            slug: line.product.slug,
+            category: line.product.category,
+            price: line.product.price,
+            quantity: line.quantity,
+            subtotal: line.subtotal,
+            image: line.product.image,
+            imageAlt: line.product.imageAlt,
+          }))}
+        />
+        <aside className="h-fit rounded-[var(--opt-radius-lg)] border border-border bg-surface-raised p-6 shadow-[var(--opt-shadow-sm)]">
+          <h2 className="text-lg font-semibold">Order summary</h2>
+          <div className="mt-5 flex justify-between border-b border-border-subtle pb-4 text-sm">
+            <span className="text-text-secondary">Subtotal</span>
+            <span data-testid="cart-total">{formatWon(total)}</span>
+          </div>
+          <div className="flex justify-between py-4 text-sm">
+            <span className="text-text-secondary">Demo delivery</span>
+            <span>Included</span>
+          </div>
+          <div className="flex justify-between border-t border-border pt-4 text-lg font-semibold">
+            <span>Total</span>
+            <span>{formatWon(total)}</span>
+          </div>
+          <Link
+            href="/checkout"
+            className="store-button focus-ring mt-6 w-full"
+            data-testid="to-checkout"
+          >
+            Continue to checkout
+          </Link>
+          <p className="mt-4 text-xs leading-5 text-text-tertiary">
+            No real payment is collected. This checkout exists to demonstrate
+            trusted conversion tracking.
+          </p>
+        </aside>
       </div>
     </div>
   );

@@ -62,13 +62,17 @@ export function ConsentBanner({ external }: { external: boolean }) {
       className="fixed inset-x-0 bottom-0 z-40 p-4"
       data-testid="consent-banner"
     >
-      <Card className="mx-auto max-w-3xl">
-        <CardContent className="flex flex-wrap items-center gap-4 py-4">
-          <p className="flex-1 text-sm text-text-secondary">
-            This banner owns the consent decision. The SDK runs with{" "}
-            <code>consent.persist: false</code> and does not create a competing
-            consent cookie.
-          </p>
+      <Card className="mx-auto max-w-3xl shadow-[var(--opt-shadow-lg)]">
+        <CardContent className="flex flex-wrap items-center gap-4 py-5 sm:px-6">
+          <div className="min-w-60 flex-1">
+            <h2 className="font-semibold">
+              Choose your demo analytics setting
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-text-secondary">
+              Allow anonymous analytics to populate the SDK examples, or decline
+              to verify the complete opt-out path.
+            </p>
+          </div>
           <Button
             variant="ghost"
             onClick={() => void decide(false)}

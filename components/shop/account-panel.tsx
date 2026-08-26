@@ -31,7 +31,7 @@ export function AccountPanel({
   if (session) {
     return (
       <Card>
-        <CardContent className="flex flex-wrap items-center gap-4 py-5">
+        <CardContent className="flex flex-wrap items-center gap-6 py-6 sm:p-8">
           <div className="flex-1">
             <p className="font-medium" data-testid="account-name">
               {session.name}
@@ -67,9 +67,14 @@ export function AccountPanel({
 
   return (
     <Card>
-      <CardContent className="py-5">
+      <CardContent className="py-6 sm:p-8">
+        <h2 className="text-xl font-semibold">Sign in to the demo</h2>
+        <p className="mt-2 text-sm text-text-secondary">
+          These credentials exist only in this local example and carry no access
+          outside it.
+        </p>
         <form
-          className="flex flex-col gap-4"
+          className="mt-6 flex flex-col gap-4"
           onSubmit={async (event) => {
             event.preventDefault();
             setBusy(true);
@@ -91,6 +96,7 @@ export function AccountPanel({
         >
           <Input
             label="Email"
+            autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             data-testid="email"
@@ -98,6 +104,7 @@ export function AccountPanel({
           <Input
             label="Password"
             type="password"
+            autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             data-testid="password"
@@ -105,8 +112,8 @@ export function AccountPanel({
           <Button type="submit" loading={busy} data-testid="sign-in">
             Sign in
           </Button>
-          <p className="text-xs text-text-secondary">
-            Demo accounts:{" "}
+          <p className="rounded-[var(--opt-radius-sm)] bg-bg-subtle p-3 text-xs leading-5 text-text-secondary">
+            Fictional demo accounts:{" "}
             {demoAccounts.map((account) => account.email).join(", ")} /
             password: <code>{demoAccounts[0]?.password}</code>
           </p>

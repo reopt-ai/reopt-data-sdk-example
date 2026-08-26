@@ -27,6 +27,7 @@ import { ConsentBanner } from "@/components/reopt/consent-banner";
 import { DevtoolsDrawer } from "@/components/reopt/devtools-drawer";
 import { SdkModeFooter } from "@/components/reopt/sdk-mode-footer";
 import { SiteHeader } from "@/components/shop/site-header";
+import { SiteFooter } from "@/components/shop/site-footer";
 import { cartCount } from "@/lib/shop/cart-session";
 import { FLAGS_COOKIE, parseFlags } from "@/lib/reopt/flags";
 import { sdkModeSummary } from "@/lib/reopt/sdk-mode";
@@ -35,12 +36,29 @@ import { reoptBaseUrl, tenantForHost } from "@/lib/reopt/tenants";
 import { diagnosticsEnabled } from "@/lib/runtime-config";
 
 export const metadata: Metadata = {
-  title: { default: "Reopt Data SDK Example", template: "%s · Reopt Example" },
+  metadataBase: new URL(process.env.BETTER_AUTH_URL ?? "http://localhost:4100"),
+  title: {
+    default: "Arc Supply — Reopt Data SDK Example",
+    template: "%s · Arc Supply",
+  },
   description:
-    "A production-shaped Next.js reference for the Reopt Data SDK client and server packages.",
+    "A production-shaped storefront demonstrating the Reopt Data SDK across browser, server, proxy, and worker boundaries.",
+  applicationName: "Arc Supply",
+  openGraph: {
+    type: "website",
+    siteName: "Arc Supply",
+    title: "Arc Supply — Reopt Data SDK Example",
+    description:
+      "Explore a production-shaped reference implementation for the Reopt Data SDK.",
+    images: [{ url: "/images/arc-supply-hero.webp", width: 1774, height: 887 }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
-const THEME_BOOT_SCRIPT = createThemeBootScript("default");
+const THEME_BOOT_SCRIPT = createThemeBootScript("default", "light", {
+  lockedPreset: "default",
+  allowedModes: ["light"],
+});
 
 export default async function RootLayout({
   children,
@@ -78,9 +96,14 @@ export default async function RootLayout({
           >
             <div className="flex min-h-screen flex-col">
               <SiteHeader cartCount={await cartCount()} />
-              <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+              <main
+                id="main-content"
+                tabIndex={-1}
+                className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12"
+              >
                 {children}
               </main>
+              <SiteFooter />
               {showDiagnostics && (
                 <SdkModeFooter
                   mode={sdkModeSummary()}

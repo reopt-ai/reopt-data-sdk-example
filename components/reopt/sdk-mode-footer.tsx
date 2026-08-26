@@ -29,7 +29,7 @@ export function SdkModeFooter({
         {mode.map((entry) => (
           <span key={entry.name} className="font-mono">
             {entry.name.replace("@reopt-ai/", "")}@{entry.version}
-            {entry.path ? ` → ${entry.path}` : ""}
+            {entry.path ? " · linked checkout" : ""}
           </span>
         ))}
         <span className="ml-auto flex flex-wrap items-center gap-3">

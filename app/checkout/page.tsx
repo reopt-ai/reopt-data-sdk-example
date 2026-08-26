@@ -1,4 +1,5 @@
-import { Card, CardContent, PageHeader } from "@reopt-ai/opt-ui";
+import { Card, CardContent } from "@reopt-ai/opt-ui";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { CheckoutForm } from "@/components/shop/checkout-form";
@@ -19,27 +20,46 @@ export default async function CheckoutPage() {
   const session = await currentSession();
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Checkout"
-        description="The server confirms each order. Exercise the same conversion through a Server Action or a Route Handler."
-      />
+    <div className="flex flex-col gap-8">
+      <header className="max-w-2xl">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          Checkout
+        </h1>
+        <p className="mt-3 leading-7 text-text-secondary">
+          Complete a safe demo order. No payment details are requested and no
+          purchase is made.
+        </p>
+      </header>
 
-      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_23rem]">
         <CheckoutForm defaultEmail={session?.email ?? ""} />
 
-        <Card>
-          <CardContent className="flex flex-col gap-2 py-5 text-sm">
-            <h2 className="font-medium">Order summary</h2>
+        <Card className="h-fit">
+          <CardContent className="flex flex-col gap-4 py-6 text-sm">
+            <h2 className="text-lg font-semibold">Order summary</h2>
             {lines.map((line) => (
-              <div key={line.productId} className="flex justify-between">
-                <span className="text-text-secondary">
-                  {line.product.name} × {line.quantity}
-                </span>
+              <div key={line.productId} className="flex items-center gap-3">
+                <div className="relative size-14 shrink-0 overflow-hidden rounded-[var(--opt-radius-sm)] bg-bg-subtle">
+                  <Image
+                    src={line.product.image}
+                    alt=""
+                    fill
+                    sizes="56px"
+                    className="object-cover"
+                  />
+                </div>
+                <p className="min-w-0 flex-1">
+                  <span className="block truncate font-medium">
+                    {line.product.name}
+                  </span>
+                  <span className="text-text-secondary">
+                    Quantity {line.quantity}
+                  </span>
+                </p>
                 <span>{formatWon(line.subtotal)}</span>
               </div>
             ))}
-            <div className="mt-2 flex justify-between font-medium">
+            <div className="mt-2 flex justify-between border-t border-border pt-4 text-base font-semibold">
               <span>Total</span>
               <span data-testid="checkout-total">{formatWon(total)}</span>
             </div>

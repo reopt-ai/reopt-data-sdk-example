@@ -5,7 +5,12 @@ import type { ReactNode } from "react";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <OptThemeProvider defaultPreset="default">
+    <OptThemeProvider
+      defaultPreset="default"
+      defaultMode="light"
+      lockedPreset="default"
+      allowedModes={["light"]}
+    >
       <ToastProvider>{children}</ToastProvider>
     </OptThemeProvider>
   );

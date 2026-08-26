@@ -5,7 +5,7 @@ import { Button, toast } from "@reopt-ai/opt-ui";
 import { useTransition } from "react";
 
 import { addToCartAction } from "@/app/actions";
-import type { Product } from "@/lib/shop/catalog";
+import type { ProductCategory } from "@/lib/shop/catalog";
 
 /**
  * `cart.added` is sent from the browser, next to the click that caused it.
@@ -14,7 +14,15 @@ import type { Product } from "@/lib/shop/catalog";
  * event. One interaction, one event — a server-side twin would double every
  * add-to-cart in the funnel.
  */
-export function AddToCartButton({ product }: { product: Product }) {
+export interface AddToCartProduct {
+  id: string;
+  slug: string;
+  name: string;
+  category: ProductCategory;
+  price: number;
+}
+
+export function AddToCartButton({ product }: { product: AddToCartProduct }) {
   const track = useTrack();
   const [pending, startTransition] = useTransition();
 

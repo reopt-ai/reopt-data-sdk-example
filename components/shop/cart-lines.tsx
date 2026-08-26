@@ -2,6 +2,8 @@
 
 import { useTrack } from "@reopt-ai/data-sdk-client/next";
 import { Button } from "@reopt-ai/opt-ui";
+import Image from "next/image";
+import Link from "next/link";
 import { useTransition } from "react";
 
 import { setQuantityAction } from "@/app/actions";
@@ -15,6 +17,8 @@ export interface CartLineView {
   price: number;
   quantity: number;
   subtotal: number;
+  image: string;
+  imageAlt: string;
 }
 
 export function CartLines({ lines }: { lines: CartLineView[] }) {
@@ -33,46 +37,73 @@ export function CartLines({ lines }: { lines: CartLineView[] }) {
   };
 
   return (
-    <ul className="flex flex-col gap-3" data-testid="cart-lines">
+    <ul className="flex flex-col gap-4" data-testid="cart-lines">
       {lines.map((line) => (
         <li
           key={line.productId}
-          className="flex items-center gap-4 rounded border border-border p-4"
+          className="grid grid-cols-[5rem_1fr] gap-4 rounded-[var(--opt-radius-lg)] border border-border bg-surface-raised p-4 shadow-[var(--opt-shadow-sm)] sm:grid-cols-[6rem_1fr_auto] sm:items-center"
         >
-          <span className="flex-1 font-medium">{line.name}</span>
-          <span className="text-sm text-text-secondary">
-            {formatWon(line.price)}
-          </span>
-          <div className="flex items-center gap-2">
+          <div className="relative aspect-square overflow-hidden rounded-[var(--opt-radius-md)] bg-bg-subtle">
+            <Image
+              src={line.image}
+              alt={line.imageAlt}
+              fill
+              sizes="(max-width: 640px) 80px, 96px"
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <Link
+              href={`/products/${line.slug}`}
+              className="focus-ring rounded font-semibold hover:text-accent"
+            >
+              {line.name}
+            </Link>
+            <p className="mt-1 text-sm text-text-secondary">
+              {formatWon(line.price)}
+            </p>
             <Button
               size="sm"
               variant="ghost"
               disabled={pending}
-              onClick={() => change(line, line.quantity - 1)}
+              onClick={() => change(line, 0)}
+              className="mt-3"
             >
-              −
-            </Button>
-            <span className="w-8 text-center" data-testid={`qty-${line.slug}`}>
-              {line.quantity}
-            </span>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={pending}
-              onClick={() => change(line, line.quantity + 1)}
-            >
-              +
+              Remove
             </Button>
           </div>
-          <span className="w-28 text-right">{formatWon(line.subtotal)}</span>
-          <Button
-            size="sm"
-            variant="danger"
-            disabled={pending}
-            onClick={() => change(line, 0)}
-          >
-            Remove
-          </Button>
+          <div className="col-span-2 flex items-center justify-between gap-4 sm:col-auto sm:flex-col sm:items-end">
+            <div
+              className="flex items-center gap-1 rounded-full border border-border p-1"
+              aria-label={`Quantity for ${line.name}`}
+            >
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={pending}
+                onClick={() => change(line, line.quantity - 1)}
+              >
+                <span aria-hidden="true">−</span>
+                <span className="sr-only">Decrease quantity</span>
+              </Button>
+              <span
+                className="w-8 text-center"
+                data-testid={`qty-${line.slug}`}
+              >
+                {line.quantity}
+              </span>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={pending}
+                onClick={() => change(line, line.quantity + 1)}
+              >
+                <span aria-hidden="true">+</span>
+                <span className="sr-only">Increase quantity</span>
+              </Button>
+            </div>
+            <span className="font-semibold">{formatWon(line.subtotal)}</span>
+          </div>
         </li>
       ))}
     </ul>

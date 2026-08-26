@@ -1,4 +1,4 @@
-import { Card, CardContent, EmptyState, PageHeader } from "@reopt-ai/opt-ui";
+import { Card, CardContent, EmptyState } from "@reopt-ai/opt-ui";
 
 import { OrdersGrid } from "@/components/shop/orders-grid";
 import { readCartId } from "@/lib/shop/cart-session";
@@ -12,11 +12,16 @@ export default async function OrdersPage() {
   const outbox = listOutboxForOrders(orders.map((order) => order.id));
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Orders"
-        description="Only this browser's orders are shown, including their confirmation path and verified analytics identity."
-      />
+    <div className="flex flex-col gap-8">
+      <header className="max-w-3xl">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          Orders
+        </h1>
+        <p className="mt-3 leading-7 text-text-secondary">
+          A browser-scoped history with the confirmation path and verified
+          analytics identity kept visible.
+        </p>
+      </header>
 
       {orders.length === 0 ? (
         <EmptyState
@@ -38,9 +43,12 @@ export default async function OrdersPage() {
         />
       )}
 
-      <Card>
-        <CardContent className="flex flex-col gap-3 py-5 text-sm">
-          <h2 className="font-medium">Outbox ({outbox.length})</h2>
+      <Card className="bg-bg-subtle">
+        <CardContent className="flex flex-col gap-3 py-6 text-sm sm:p-8">
+          <h2 className="text-lg font-semibold">
+            Delayed event outbox{" "}
+            <span className="text-text-tertiary">({outbox.length})</span>
+          </h2>
           <p className="text-text-secondary">
             These rows record who a delayed conversion belongs to. Running{" "}
             <code>pnpm forward</code> sends them with{" "}

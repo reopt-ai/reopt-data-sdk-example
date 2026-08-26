@@ -11,11 +11,109 @@
 
 @source "../node_modules/@reopt-ai/opt-ui/dist";
 
+[data-theme="default"] {
+  --opt-surface: #fffdf8;
+  --opt-surface-raised: #ffffff;
+  --opt-surface-overlay: #ffffff;
+  --opt-surface-input: #fffdf8;
+  --opt-bg: #f7f4ed;
+  --opt-bg-subtle: #efebe1;
+  --opt-bg-muted: #e5e0d4;
+  --opt-text: #20201f;
+  --opt-text-secondary: #68645d;
+  --opt-text-tertiary: #6f6a61;
+  --opt-accent: #1757ff;
+  --opt-accent-hover: #0e43d7;
+  --opt-accent-subtle: #e7edff;
+  --opt-accent-fg: #ffffff;
+  --opt-border: rgba(32, 32, 31, 0.14);
+  --opt-border-hover: rgba(32, 32, 31, 0.28);
+  --opt-border-subtle: rgba(32, 32, 31, 0.08);
+  --opt-ring: #1757ff;
+  --opt-ring-offset: #fffdf8;
+  --opt-radius-sm: 0.45rem;
+  --opt-radius-md: 0.8rem;
+  --opt-radius-lg: 1.25rem;
+  --opt-shadow-sm: 0 1px 2px rgb(32 32 31 / 0.05);
+  --opt-shadow-md: 0 12px 32px rgb(32 32 31 / 0.09);
+  --opt-shadow-lg: 0 24px 60px rgb(32 32 31 / 0.14);
+  --opt-font-heading: Inter, ui-sans-serif, system-ui, sans-serif;
+  --opt-font-body: Inter, ui-sans-serif, system-ui, sans-serif;
+  --arc-walnut: #7a4930;
+  --arc-coral: #f06a53;
+}
+
 html,
 body {
   background-color: var(--opt-bg);
   color: var(--opt-text);
   font-family: var(--opt-font-body);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+body {
+  min-width: 320px;
+  text-rendering: optimizeLegibility;
+}
+::selection {
+  background: var(--opt-accent-subtle);
+  color: var(--opt-text);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--opt-ring);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: var(--opt-radius-sm);
+  background: var(--opt-accent);
+  color: var(--opt-accent-fg);
+  padding: 0.65rem 0.9rem;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.store-button {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  background: var(--opt-accent);
+  color: var(--opt-accent-fg);
+  padding: 0.7rem 1.2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: 160ms ease;
+}
+.store-button:hover {
+  background: var(--opt-accent-hover);
+  transform: translateY(-1px);
+}
+.store-button-secondary {
+  background: var(--opt-surface);
+  color: var(--opt-text);
+  border: 1px solid var(--opt-border);
+}
+.store-button-secondary:hover {
+  background: var(--opt-bg-subtle);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 /* The scroll-depth demo needs a page tall enough to scroll. */

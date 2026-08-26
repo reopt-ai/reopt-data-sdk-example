@@ -1,4 +1,8 @@
-import { Badge, Card, CardContent, Separator } from "@reopt-ai/opt-ui";
+import { Badge, Card, CardContent } from "@reopt-ai/opt-ui";
+import { Check, ChevronRight, PackageCheck, RotateCcw } from "lucide-react";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -11,9 +15,24 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
-  return { title: findProduct(slug)?.name ?? "Product" };
+  const product = findProduct(slug);
+  if (!product) return { title: "Product" };
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      images: [
+        {
+          url: product.image,
+          width: 1254,
+          height: 1254,
+          alt: product.imageAlt,
+        },
+      ],
+    },
+  };
 }
 
 export default async function ProductPage({
@@ -24,14 +43,10 @@ export default async function ProductPage({
   const { slug } = await params;
   const product = findProduct(slug);
   if (!product) notFound();
-
   const flags = parseFlags((await cookies()).get(FLAGS_COOKIE)?.value);
 
   return (
-    <article className="flex flex-col gap-8">
-      {/* With the automatic page view off, this route sends its own — with the
-          product context the router could not have known. `register()` runs
-          either way, so $pageleave and $web_vitals carry it too. */}
+    <article className="flex flex-col gap-12 sm:gap-16">
       <ManualPageView
         enabled={!flags.autoPageview}
         properties={{
@@ -41,53 +56,138 @@ export default async function ProductPage({
         }}
       />
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <div
-          className="h-72 w-full rounded"
-          style={{
-            background: `linear-gradient(135deg, ${product.swatch[0]}, ${product.swatch[1]})`,
-          }}
-          aria-hidden="true"
-        />
-        <div className="flex flex-col gap-4">
-          <Badge variant="info">{product.category}</Badge>
-          <h1 className="text-2xl font-semibold">{product.name}</h1>
-          <p className="text-text-secondary">{product.description}</p>
-          <p className="text-xl">{formatWon(product.price)}</p>
-          <p className="text-sm text-text-secondary">
-            {product.stock} in stock
+      <nav
+        aria-label="Breadcrumb"
+        className="flex items-center gap-1 text-sm text-text-secondary"
+      >
+        <Link href="/products" className="focus-ring rounded hover:text-accent">
+          Products
+        </Link>
+        <ChevronRight className="size-4" aria-hidden="true" />
+        <span aria-current="page">{product.name}</span>
+      </nav>
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:gap-14">
+        <div className="relative aspect-square overflow-hidden rounded-[calc(var(--opt-radius-lg)+0.5rem)] bg-bg-subtle">
+          <Image
+            src={product.image}
+            alt={product.imageAlt}
+            fill
+            preload
+            sizes="(max-width: 1024px) 100vw, 58vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="flex flex-col lg:py-5">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="info">{product.category}</Badge>
+            {product.badge && <Badge>{product.badge}</Badge>}
+          </div>
+          <h1 className="mt-5 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
+            {product.name}
+          </h1>
+          <p className="mt-3 text-lg text-text-secondary">{product.blurb}</p>
+          <p className="mt-7 text-2xl font-semibold">
+            {formatWon(product.price)}
           </p>
-          <AddToCartButton product={product} />
+          <p className="mt-5 max-w-xl leading-7 text-text-secondary">
+            {product.description}
+          </p>
+
+          <dl className="mt-8 divide-y divide-border-subtle border-y border-border-subtle text-sm">
+            {product.details.map((detail) => (
+              <div
+                key={detail.label}
+                className="grid grid-cols-[7rem_1fr] gap-4 py-3.5"
+              >
+                <dt className="text-text-tertiary">{detail.label}</dt>
+                <dd className="font-medium">{detail.value}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <AddToCartButton
+              product={{
+                id: product.id,
+                slug: product.slug,
+                name: product.name,
+                category: product.category,
+                price: product.price,
+              }}
+            />
+            <span className="flex items-center gap-1.5 text-sm text-text-secondary">
+              <Check className="size-4 text-success" aria-hidden="true" />
+              {product.stock} ready to ship in this demo
+            </span>
+          </div>
+
+          <div className="mt-8 grid gap-3 text-sm sm:grid-cols-2">
+            <div className="flex gap-3 rounded-[var(--opt-radius-md)] bg-bg-subtle p-4">
+              <PackageCheck
+                className="size-5 shrink-0 text-accent"
+                aria-hidden="true"
+              />
+              <p>
+                <strong className="block font-medium">
+                  Tracked fulfillment
+                </strong>
+                <span className="text-text-secondary">
+                  Server-confirmed order boundary
+                </span>
+              </p>
+            </div>
+            <div className="flex gap-3 rounded-[var(--opt-radius-md)] bg-bg-subtle p-4">
+              <RotateCcw
+                className="size-5 shrink-0 text-accent"
+                aria-hidden="true"
+              />
+              <p>
+                <strong className="block font-medium">
+                  Fail-open storefront
+                </strong>
+                <span className="text-text-secondary">
+                  Shopping works without analytics
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <Separator />
-
-      <Card>
-        <CardContent className="flex flex-col gap-2 py-5 text-sm">
-          <h2 className="font-medium">What this page sends</h2>
-          <ul className="list-disc pl-5 text-text-secondary">
+      <Card className="overflow-hidden border-accent/20 bg-accent-subtle">
+        <CardContent className="grid gap-6 py-6 lg:grid-cols-[0.55fr_1.45fr] lg:p-8">
+          <div>
+            <h2 className="text-xl font-semibold">What this view measures</h2>
+            <p className="mt-2 text-sm leading-6 text-text-secondary">
+              A compact, inspectable contract for the product-detail journey.
+            </p>
+          </div>
+          <ul className="grid gap-3 text-sm text-text-secondary sm:grid-cols-3">
             <li>
-              <code>$pageview</code> — <code>normalizePath</code> folds the URL
-              into <code>/products/:slug</code> and preserves the removed value
-              as <code>product_slug</code>.
+              <code className="text-text">$pageview</code>
+              <span className="mt-1 block leading-6">
+                Normalizes the slug and preserves product context.
+              </span>
             </li>
             <li>
-              <code>register()</code> — <code>product_id</code>,{" "}
-              <code>page_id</code> is attached to every subsequent event.
+              <code className="text-text">register()</code>
+              <span className="mt-1 block leading-6">
+                Carries product and page identity into later events.
+              </span>
             </li>
             <li>
-              <code>cart.added</code> — emitted by the button. The Server Action
-              changes the cart without duplicating the browser event.
+              <code className="text-text">cart.added</code>
+              <span className="mt-1 block leading-6">
+                Records the intent once, beside the browser action.
+              </span>
             </li>
           </ul>
-          <p className="text-text-secondary">
-            Current page-view mode:{" "}
-            <strong>
-              {flags.autoPageview
-                ? "automatic (<ReoptPageView />)"
-                : "manual (pageView())"}
-            </strong>
+          <p className="text-xs text-text-tertiary lg:col-start-2">
+            Page-view mode:{" "}
+            {flags.autoPageview
+              ? "automatic via ReoptPageView"
+              : "manual via pageView()"}
           </p>
         </CardContent>
       </Card>
