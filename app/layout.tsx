@@ -47,12 +47,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Arc Supply",
-    title: "Arc Supply — Reopt Data SDK Example",
+    title: "Reopt Data SDK Example",
     description:
       "Explore a production-shaped reference implementation for the Reopt Data SDK.",
-    images: [{ url: "/images/arc-supply-hero.webp", width: 1774, height: 887 }],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Reopt Data SDK Example",
+    description:
+      "A production-shaped reference implementation for the Reopt Data SDK.",
+  },
 };
 
 const THEME_BOOT_SCRIPT = createThemeBootScript("default", "light", {

@@ -5,6 +5,8 @@ A production-shaped Next.js reference application for
 and
 [`@reopt-ai/data-sdk-server`](https://www.npmjs.com/package/@reopt-ai/data-sdk-server).
 
+![Reopt Data SDK Example Open Graph card](./app/opengraph-image.png)
+
 ![Arc Supply storefront, the fictional commerce experience used by this example](./docs/screenshots/storefront-home.png)
 
 **Arc Supply** is the fictional workspace-goods storefront used by this

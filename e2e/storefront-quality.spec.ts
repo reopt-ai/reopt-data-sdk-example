@@ -66,6 +66,38 @@ test.describe("storefront quality", () => {
     await expect(page.locator("#main-content")).toBeFocused();
   });
 
+  test("publishes the generated favicon and Reopt SDK social card", async ({
+    page,
+    request,
+  }) => {
+    await page.goto("/");
+
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+      "content",
+      "Reopt Data SDK Example",
+    );
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute(
+      "content",
+      "Reopt Data SDK Example",
+    );
+
+    const socialImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(socialImage).toContain("/opengraph-image");
+    const socialResponse = await request.get(socialImage!);
+    expect(socialResponse.ok()).toBe(true);
+    expect(socialResponse.headers()["content-type"]).toContain("image/png");
+
+    const iconLinks = await page
+      .locator('link[rel="icon"]')
+      .evaluateAll((links) =>
+        links.map((link) => link.getAttribute("href") ?? ""),
+      );
+    expect(iconLinks.some((href) => href.includes("/favicon.ico"))).toBe(true);
+    expect(iconLinks.some((href) => href.includes("/icon"))).toBe(true);
+  });
+
   for (const route of PUBLIC_ROUTES) {
     test(`${route} has no serious automated accessibility violations`, async ({
       page,
