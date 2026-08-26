@@ -1,0 +1,41 @@
+name: Feature request
+description: Propose a new SDK example or improvement to an existing pattern
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Integration problem
+      description: Which real integration question should the example answer?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed example
+      description: Describe the route, interaction, SDK API, and observable result.
+    validations:
+      required: true
+  - type: input
+    id: packages
+    attributes:
+      label: Affected SDK packages
+      placeholder: "@reopt-ai/data-sdk-client, @reopt-ai/data-sdk-server"
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Explain other ways a contributor might learn or validate this behavior.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope checks
+      options:
+        - label: This proposal teaches or validates a Reopt Data SDK integration pattern.
+          required: true
+        - label: The storefront is only as complex as needed to demonstrate the SDK behavior.
+          required: true

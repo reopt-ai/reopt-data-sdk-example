@@ -1,0 +1,16 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - next
+  - "@next/*"
+  - postcss
+  - "@reopt-ai/opt-ui@1.10.0"
+  - "@reopt-ai/opt-datagrid@1.6.0"
+  - "@reopt-ai/data-contract@0.6.3"
+  - "@reopt-ai/data-sdk-client@0.1.6"
+  - "@reopt-ai/data-sdk-server@0.1.6"
+overrides:
+  "@types/react": 19.2.18
+  "@types/react-dom": 19.2.4

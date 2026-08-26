@@ -1,0 +1,24 @@
+/*
+ * Global CSS — @reopt-ai/opt-ui on Tailwind v4.
+ *
+ * `tailwind.css` from the package carries the theme presets, the dark variant
+ * and the CSS-variable → utility mapping. `@source` is what lets Tailwind see
+ * the class names inside the package's own compiled components.
+ */
+
+@import "tailwindcss";
+@import "@reopt-ai/opt-ui/tailwind.css";
+
+@source "../node_modules/@reopt-ai/opt-ui/dist";
+
+html,
+body {
+  background-color: var(--opt-bg);
+  color: var(--opt-text);
+  font-family: var(--opt-font-body);
+}
+
+/* The scroll-depth demo needs a page tall enough to scroll. */
+.shop-tall-section {
+  min-height: 70vh;
+}

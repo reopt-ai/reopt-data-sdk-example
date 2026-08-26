@@ -1,0 +1,54 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "eslint",
+    "typescript",
+    "unicorn",
+    "oxc",
+    "react",
+    "nextjs",
+    "import",
+    "jsx-a11y"
+  ],
+  "categories": { "correctness": "warn" },
+  "env": { "browser": true, "builtin": true, "node": true },
+  "ignorePatterns": [
+    ".next/**",
+    ".vercel/**",
+    "build/**",
+    "coverage/**",
+    "out/**",
+    "playwright-report/**",
+    "test-results/**",
+    "next-env.d.ts"
+  ],
+  "rules": {
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "typescript/consistent-type-imports": [
+      "error",
+      { "fixStyle": "inline-type-imports" }
+    ],
+    "typescript/no-explicit-any": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/no-unknown-property": "off",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/self-closing-comp": "warn",
+    "nextjs/no-html-link-for-pages": "off"
+  },
+  "overrides": [
+    {
+      "files": ["app/api/**/*.ts", "scripts/**/*.{ts,mjs}", "e2e/**/*.ts"],
+      "rules": { "no-console": "off" }
+    }
+  ]
+}
