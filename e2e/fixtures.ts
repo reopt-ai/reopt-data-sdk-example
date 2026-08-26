@@ -2,13 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, type Page } from "@playwright/test";
 
-// Types only — erased at compile time, so the client module never loads here.
-// Reusing them keeps the specs honest: if the recorder's shape changes, these
-// stop compiling instead of silently asserting on a field that no longer exists.
-import type {
-  RecordedBatch,
-  RecordedEvent,
-} from "@/components/reopt/devtools-store";
+// Types only — erased at compile time. Reusing the devtool's own types keeps
+// the specs honest: if the recorder's shape changes, these stop compiling
+// instead of silently asserting on a field that no longer exists.
+import type { RecordedBatch, RecordedEvent } from "@reopt-ai/data-sdk-devtool";
 
 /**
  * Helpers shared by the specs.
@@ -25,8 +22,9 @@ import type {
  *    specs produce one.
  *
  * The specs assert on what the SDK *built*, not on what the network carried:
- * the app injects `ReoptClientConfig.fetch`, which records every batch into a
- * store the page exposes as `window.__reoptDevtools`. That is the seam the SDK
+ * the app injects `ReoptClientConfig.fetch` from `@reopt-ai/data-sdk-devtool`,
+ * which records every batch into a store the page exposes as
+ * `window.__reoptDevtools`. That is the seam the SDK
  * itself documents for tests, and it beats `page.route()` interception — an
  * intercepted request never reaches ingest, so a spec that stubs the network
  * cannot tell a correct payload from one the server would reject.

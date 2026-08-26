@@ -79,8 +79,8 @@ export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "browser",
     api: "config.fetch",
-    what: "Records transport payloads for the devtools panel and end-to-end assertions",
-    where: "components/reopt/devtools-store.ts",
+    what: "Hands the SDK the @reopt-ai/data-sdk-devtool recorder, forced on in production",
+    where: "lib/reopt/devtools.ts · components/reopt/devtools-drawer.tsx",
   },
   {
     area: "browser",

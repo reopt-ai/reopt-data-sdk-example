@@ -133,14 +133,20 @@ either is missing, but the backend cannot issue session credentials.
 
 ## Explore the integration
 
-In development, open the **SDK devtools** button in the lower-right corner
-before navigating. It shows the exact outgoing batches and responses, queue
-depth, identity and consent cookies, installed SDK versions, and runtime
-configuration switches.
+Open the **SDK devtools** button in the lower-right corner before navigating.
+It shows the exact outgoing batches and responses, queue depth, identity and
+consent cookies, and this app's runtime configuration switches.
 
-Diagnostics are hidden in production because they expose raw analytics payloads
-and deployment metadata. A controlled example deployment may opt in with
-`REOPT_EXAMPLE_DIAGNOSTICS=true`; do not enable it in a customer application.
+The panel is [`@reopt-ai/data-sdk-devtool`](https://github.com/reopt-ai/reopt-data/tree/main/packages/data-sdk-devtool).
+On its own it is off under `NODE_ENV=production`; this app forces it on with
+`createDevtools({ enabled: true })` (`lib/reopt/devtools.ts`) because showing
+what the SDK sends is the point of the example. The switches are the app's own
+tab, added through the panel's `panels` prop. A customer application keeps the
+default.
+
+The SDK mode footer still exposes deployment metadata and stays hidden in
+production unless `REOPT_EXAMPLE_DIAGNOSTICS=true`; do not enable it in a
+customer application.
 
 | Route              | Integration exercised                                               |
 | ------------------ | ------------------------------------------------------------------- |
@@ -186,7 +192,7 @@ the same change.
 | Browser | `getDeviceId()`                                        | `components/shop/checkout-form.tsx`                                                 |
 | Browser | `capture.exceptions` / `captureException()`            | `components/reopt/instrumentation-lab.tsx`                                          |
 | Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts`                  |
-| Browser | `config.fetch`                                         | `components/reopt/devtools-store.ts`                                                |
+| Browser | `config.fetch`                                         | `lib/reopt/devtools.ts` · `components/reopt/devtools-drawer.tsx`                    |
 | Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx`                                          |
 | Server  | `createReopt({ writeKey, credentials, getProfileId })` | `lib/reopt/server.ts`                                                               |
 | Server  | `getBootstrap()`                                       | `app/layout.tsx`                                                                    |

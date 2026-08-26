@@ -116,7 +116,8 @@ export default async function RootLayout({
               )}
             </div>
             <ConsentBanner external={flags.externalConsent} />
-            {showDiagnostics && <DevtoolsDrawer />}
+            {/* Always on, production included — see lib/reopt/devtools.ts. */}
+            <DevtoolsDrawer />
           </AnalyticsProvider>
         </Providers>
       </body>

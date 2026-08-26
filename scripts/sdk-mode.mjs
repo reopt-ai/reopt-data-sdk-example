@@ -52,6 +52,7 @@ const tarballDir = join(root, ".sdk-local", "packages");
 const LINKABLE = [
   "@reopt-ai/data-contract",
   "@reopt-ai/data-sdk-client",
+  "@reopt-ai/data-sdk-devtool",
   "@reopt-ai/data-sdk-server",
 ];
 

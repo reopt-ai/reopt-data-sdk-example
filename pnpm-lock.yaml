@@ -33,6 +33,9 @@ importers:
       '@reopt-ai/data-sdk-client':
         specifier: 0.1.6
         version: 0.1.6(next@16.3.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@reopt-ai/data-sdk-devtool':
+        specifier: 0.1.0
+        version: 0.1.0(@reopt-ai/data-sdk-client@0.1.6(next@16.3.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@reopt-ai/data-sdk-server':
         specifier: 0.1.6
         version: 0.1.6(next@16.3.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
@@ -910,6 +913,15 @@ packages:
     peerDependenciesMeta:
       next:
         optional: true
+      react:
+        optional: true
+
+  '@reopt-ai/data-sdk-devtool@0.1.0':
+    resolution: {integrity: sha512-jcRIC7Li23VJF/W3raMu9CGJwVyv5d0n1gdZD6z+GjfZapjxBd1ecwaIzXH/B0ghMEv1WnNsNsyBHiP3KzRaHA==}
+    peerDependencies:
+      '@reopt-ai/data-sdk-client': '>=0.1.6'
+      react: '>=18.0.0'
+    peerDependenciesMeta:
       react:
         optional: true
 
@@ -2506,6 +2518,12 @@ snapshots:
       '@reopt-ai/data-contract': 0.6.3
     optionalDependencies:
       next: 16.3.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react: 19.2.8
+
+  '@reopt-ai/data-sdk-devtool@0.1.0(@reopt-ai/data-sdk-client@0.1.6(next@16.3.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@reopt-ai/data-sdk-client': 0.1.6(next@16.3.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+    optionalDependencies:
       react: 19.2.8
 
   '@reopt-ai/data-sdk-server@0.1.6(next@16.3.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))':

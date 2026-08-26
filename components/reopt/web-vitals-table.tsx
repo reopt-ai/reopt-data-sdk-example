@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, CardContent } from "@reopt-ai/opt-ui";
-import { useSyncExternalStore } from "react";
+import { useDevtoolsState } from "@reopt-ai/data-sdk-devtool/react";
 
-import { getServerSnapshot, getSnapshot, subscribe } from "./devtools-store";
+import { devtools } from "@/lib/reopt/devtools";
 
 /**
  * The `$web_vitals` events this page produced, read back out of the recorded
@@ -11,7 +11,7 @@ import { getServerSnapshot, getSnapshot, subscribe } from "./devtools-store";
  * measures anything itself.
  */
 export function WebVitalsTable() {
-  const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const state = useDevtoolsState(devtools);
 
   const vitals = state.batches
     .flatMap((batch) => batch.events)

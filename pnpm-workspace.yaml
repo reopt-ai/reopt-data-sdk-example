@@ -10,6 +10,7 @@ minimumReleaseAgeExclude:
   - "@reopt-ai/opt-datagrid@1.6.0"
   - "@reopt-ai/data-contract@0.6.3"
   - "@reopt-ai/data-sdk-client@0.1.6"
+  - "@reopt-ai/data-sdk-devtool@0.1.0"
   - "@reopt-ai/data-sdk-server@0.1.6"
 overrides:
   "@types/react": 19.2.18
