@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { fileURLToPath } from "node:url";
 
 const SECURITY_HEADERS = [
   {
@@ -20,6 +21,13 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  ...(process.env.REOPT_DATA_LOCAL_LINKS === "true"
+    ? {
+        // Turbopack intentionally refuses linked files outside its root. The
+        // local stack opts into the common parent of this app and reopt-data.
+        turbopack: { root: fileURLToPath(new URL("..", import.meta.url)) },
+      }
+    : {}),
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];
   },

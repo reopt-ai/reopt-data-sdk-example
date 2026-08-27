@@ -135,7 +135,12 @@ export default async function RootLayout({
               external={flags.externalConsent}
               diagnostics={showDiagnostics}
             />
-            {showDiagnostics ? <DevtoolsDrawer /> : null}
+            {showDiagnostics ? (
+              <DevtoolsDrawer
+                consoleOrigin={reoptBaseUrl()}
+                projectId={tenant?.projectId ?? null}
+              />
+            ) : null}
           </ReoptBoundary>
         </Providers>
       </body>

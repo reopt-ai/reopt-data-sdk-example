@@ -42,7 +42,10 @@ export interface AnalyticsProviderProps {
   children: ReactNode;
 }
 
-export type AnalyticsTransport = Pick<ReoptClientConfig, "fetch">;
+export type AnalyticsTransport = Pick<ReoptClientConfig, "fetch"> & {
+  /** Available in the lifecycle-aware client release used by local SDK development. */
+  observe?: (observation: unknown) => void;
+};
 
 export function AnalyticsProvider(props: AnalyticsProviderProps) {
   return <AnalyticsProviderWithTransport {...props} />;

@@ -2,7 +2,7 @@
 
 import { ReoptDevtools } from "@reopt-ai/data-sdk-devtool/react";
 import { Separator } from "@reopt-ai/opt-ui";
-import { useState } from "react";
+import { useState, type ComponentProps, type ComponentType } from "react";
 
 import { devtools } from "@/lib/reopt/devtools";
 import {
@@ -15,6 +15,14 @@ import {
   type Flags,
 } from "@/lib/reopt/flags";
 
+type StatusBarDevtoolsProps = ComponentProps<typeof ReoptDevtools> & {
+  layout?: "status-bar" | "button";
+  console?: { origin: string; projectId: string } | undefined;
+};
+
+const StatusBarDevtools =
+  ReoptDevtools as ComponentType<StatusBarDevtoolsProps>;
+
 /**
  * The SDK devtools panel — what was sent, who the browser thinks it is, and
  * (this app's own tab) which options are on.
@@ -24,10 +32,18 @@ import {
  * the piece that makes the app a testbed rather than a demo: an SDK change is
  * visible here within one interaction, without a dashboard round trip.
  */
-export function DevtoolsDrawer() {
+export function DevtoolsDrawer({
+  consoleOrigin,
+  projectId,
+}: {
+  consoleOrigin: string;
+  projectId: string | null;
+}) {
   return (
-    <ReoptDevtools
+    <StatusBarDevtools
       devtools={devtools}
+      layout="status-bar"
+      console={projectId ? { origin: consoleOrigin, projectId } : undefined}
       panels={[
         { id: "flags", label: "SDK settings", render: () => <FlagPanel /> },
       ]}

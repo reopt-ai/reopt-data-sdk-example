@@ -26,6 +26,7 @@
   "packageManager": "pnpm@10.30.1",
   "scripts": {
     "dev": "next dev -p 4100",
+    "dev:stack": "node scripts/dev-stack.mjs",
     "build": "next build",
     "start": "node scripts/start.mjs",
     "lint": "oxlint . --report-unused-disable-directives",
@@ -41,10 +42,15 @@
     "verify:full": "node scripts/verify-feature.mjs full",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
+    "e2e:devtool": "playwright test --config=playwright.devtool.config.ts",
     "e2e:production": "pnpm build && playwright test --config=playwright.production.config.ts && playwright test --config=playwright.production-diagnostics.config.ts",
     "e2e:deployed": "playwright test --config=playwright.deployed.config.ts",
     "e2e:roundtrip": "playwright test --config=playwright.roundtrip.config.ts",
     "forward": "tsx scripts/forward.ts",
+    "sdk:mode": "node scripts/sdk-mode.mjs status",
+    "sdk:local": "node scripts/sdk-mode.mjs local",
+    "sdk:tarball": "node scripts/sdk-mode.mjs tarball",
+    "sdk:npm": "node scripts/sdk-mode.mjs npm",
     "commitlint": "commitlint",
     "prepare": "husky"
   },

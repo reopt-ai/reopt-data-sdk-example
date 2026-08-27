@@ -63,6 +63,25 @@ Do not add `NEXT_PUBLIC_` to server credentials. Production startup rejects an
 unsafe auth URL, an unsafe reopt Data URL, or an incomplete server credential
 pair. HTTP service URLs are accepted only for localhost development.
 
+### Develop against the sibling SDK
+
+With `reopt-data` and this repository next to each other, run the complete local
+loop from this repository:
+
+```bash
+pnpm dev:stack
+```
+
+It links the four Data SDK packages, performs an initial dependency-aware
+build, keeps their `dist/` output watched, starts `reopt-data` with `dev:min`,
+and starts this app. If `.reopt-local.json` exists, its first project is loaded
+into the child-process environment without printing credential values. The
+command does not create or reset Data resources and does not run a cron drainer.
+
+Use `pnpm sdk:mode` to inspect the active source, `pnpm sdk:tarball` for a
+package-fidelity check, and `pnpm sdk:npm` before handing off or deploying this
+standalone repository.
+
 ## Architecture
 
 ```mermaid
@@ -130,7 +149,7 @@ capability changes.
 | Browser | `getDeviceId()`                                        | `components/shop/checkout-form.tsx`                                                                                     |
 | Browser | `capture.exceptions` / `captureException()`            | `components/reopt/instrumentation-lab.tsx`                                                                              |
 | Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts`                                                      |
-| Browser | `config.fetch`                                         | `lib/reopt/devtools.ts` · `components/reopt/diagnostic-analytics-provider.tsx` · `components/reopt/devtools-drawer.tsx` |
+| Browser | `config.fetch / config.observe`                        | `lib/reopt/devtools.ts` · `components/reopt/diagnostic-analytics-provider.tsx` · `components/reopt/devtools-drawer.tsx` |
 | Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx`                                                                              |
 | Server  | `createReopt({ writeKey, credentials, getProfileId })` | `lib/reopt/server.ts`                                                                                                   |
 | Server  | `getBootstrap()`                                       | `app/layout.tsx`                                                                                                        |
@@ -167,10 +186,11 @@ pattern in a real application.
 ### Transport-level tests
 
 The diagnostic test suite injects the devtool recorder as
-`ReoptClientConfig.fetch`. It inspects the payload constructed by the SDK and
-still allows the request to reach ingest; it does not make a stubbed request
-look successful. The recorder and drawer live behind the diagnostic client
-boundary, so the production default requests neither.
+`ReoptClientConfig.fetch` and `ReoptClientConfig.observe`. It inspects the
+sanitized payload and enqueue-time lifecycle produced by the SDK and still
+allows the request to reach ingest; it does not make a stubbed request look
+successful. The recorder and drawer live behind the diagnostic client boundary,
+so the production default requests neither.
 
 ## Validation
 

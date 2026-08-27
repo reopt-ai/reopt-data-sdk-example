@@ -7,7 +7,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./e2e",
-  testIgnore: /(roundtrip|deployed|production-safety)\.spec\.ts/,
+  testIgnore: /(roundtrip|deployed|production-safety|devtool-visual)\.spec\.ts/,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: 1,

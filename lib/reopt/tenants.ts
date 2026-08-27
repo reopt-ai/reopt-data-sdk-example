@@ -11,6 +11,8 @@ export const DEFAULT_REOPT_DATA_BASE_URL = "https://data.reopt.ai";
 
 export interface TenantRecord {
   name: string;
+  /** Public identifier used only for an authenticated console deep link. */
+  projectId: string | null;
   writeKey: string;
 }
 
@@ -31,6 +33,7 @@ export function tenantForHost(
   if (!writeKey) return null;
   return {
     name: "environment",
+    projectId: process.env.REOPT_DATA_PROJECT_ID ?? null,
     writeKey,
   };
 }
