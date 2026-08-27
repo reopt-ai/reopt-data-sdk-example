@@ -23,7 +23,7 @@ export default function GuidePage() {
           SDK capability map
         </h1>
         <p className="mt-3 text-lg leading-8 text-text-secondary">
-          Every Reopt Data SDK capability exercised by this storefront, with the
+          Every reopt Data SDK capability exercised by this storefront, with the
           exact source that demonstrates it.
         </p>
       </header>

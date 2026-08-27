@@ -28,7 +28,7 @@ const secretPatterns = [
   {
     name: "populated secret environment variable",
     pattern:
-      /^(?:REOPT_CLIENT_SECRET|BETTER_AUTH_SECRET|AUTH_SECRET|DATABASE_URL|ENCRYPTION_KEY)[ \t]*=[ \t]*[^\s#]+/m,
+      /^(?:REOPT_DATA_[A-Z0-9_]*SECRET|BETTER_AUTH_SECRET|AUTH_SECRET|DATABASE_URL|ENCRYPTION_KEY)[ \t]*=[ \t]*[^\s#]+/m,
   },
   {
     name: "GitHub token",

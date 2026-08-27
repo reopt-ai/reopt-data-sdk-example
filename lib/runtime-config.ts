@@ -9,7 +9,7 @@ import { assertProductionRuntimeConfig } from "./runtime-config.shared.mjs";
 export function diagnosticsEnabled(): boolean {
   return (
     process.env.NODE_ENV !== "production" ||
-    process.env.REOPT_EXAMPLE_DIAGNOSTICS === "true"
+    process.env.REOPT_DATA_EXAMPLE_DIAGNOSTICS === "true"
   );
 }
 

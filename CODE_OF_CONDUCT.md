@@ -4,7 +4,7 @@
 
 We are committed to a professional, inclusive, and harassment-free community.
 Participation in this repository must remain respectful, constructive, and
-focused on improving the Reopt Data SDK integration experience.
+focused on improving the reopt Data SDK integration experience.
 
 ## Expected behavior
 

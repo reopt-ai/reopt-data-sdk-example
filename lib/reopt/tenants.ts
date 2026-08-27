@@ -89,17 +89,17 @@ function readStoreFile(): TenantStore | null {
 }
 
 function storeFromEnv(): TenantStore | null {
-  const writeKey = process.env.REOPT_WRITE_KEY;
+  const writeKey = process.env.REOPT_DATA_WRITE_KEY;
   if (!writeKey) return null;
   return {
-    baseUrl: process.env.REOPT_BASE_URL ?? "http://localhost:4001",
+    baseUrl: process.env.REOPT_DATA_BASE_URL ?? "http://localhost:4001",
     projects: [
       {
         hosts: ["*"],
         name: "env",
         writeKey,
-        clientId: process.env.REOPT_CLIENT_ID ?? "",
-        clientSecret: process.env.REOPT_CLIENT_SECRET ?? "",
+        clientId: process.env.REOPT_DATA_CLIENT_ID ?? "",
+        clientSecret: process.env.REOPT_DATA_CLIENT_SECRET ?? "",
       },
     ],
   };
@@ -109,7 +109,7 @@ function storeFromEnv(): TenantStore | null {
 export function reoptBaseUrl(): string {
   return (
     unsafeTenantStore()?.baseUrl ??
-    process.env.REOPT_BASE_URL ??
+    process.env.REOPT_DATA_BASE_URL ??
     "http://localhost:4001"
   );
 }

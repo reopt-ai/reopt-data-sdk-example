@@ -1,11 +1,13 @@
-# Reopt Data SDK Example
+# reopt Data SDK Example
 
 A production-shaped Next.js reference application for
 [`@reopt-ai/data-sdk-client`](https://www.npmjs.com/package/@reopt-ai/data-sdk-client)
 and
 [`@reopt-ai/data-sdk-server`](https://www.npmjs.com/package/@reopt-ai/data-sdk-server).
+See the [reopt Data documentation](https://data.reopt.ai/docs) for SDK concepts,
+configuration, and API guidance.
 
-![Reopt Data SDK Example Open Graph card](./app/opengraph-image.png)
+![reopt Data SDK Example Open Graph card](./app/opengraph-image.png)
 
 ![Arc Supply storefront, the fictional commerce experience used by this example](./docs/screenshots/storefront-home.png)
 
@@ -18,8 +20,8 @@ demo-only abstraction. Its products, accounts, and orders are illustrative and
 never represent real purchases.
 
 The Arc Supply name, catalogue, logo, and product photography were created
-solely for this example. They are not Reopt corporate brand assets and should
-not be reused to represent Reopt or a real merchant.
+solely for this example. They are not reopt corporate brand assets and should
+not be reused to represent reopt or a real merchant.
 
 ## Why this repository exists
 
@@ -79,7 +81,7 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:4100](http://localhost:4100). No Reopt credentials are
+Open [http://localhost:4100](http://localhost:4100). No reopt credentials are
 required to explore the app: a missing write key creates a disabled, no-op SDK
 client and the storefront continues to work. Local diagnostics show that
 fail-open state explicitly.
@@ -96,18 +98,19 @@ pnpm dev
 
 The relevant variables are:
 
-| Variable                    | Purpose                                            | Browser-visible |
-| --------------------------- | -------------------------------------------------- | --------------- |
-| `REOPT_BASE_URL`            | Origin of the Reopt data endpoint                  | Indirectly      |
-| `REOPT_WRITE_KEY`           | Public project write key                           | Yes             |
-| `REOPT_CLIENT_ID`           | Server API client identifier                       | No              |
-| `REOPT_CLIENT_SECRET`       | Server API client secret                           | **Never**       |
-| `BETTER_AUTH_SECRET`        | Session-signing secret for the example application | No              |
-| `BETTER_AUTH_URL`           | Public origin of this application                  | Yes             |
-| `REOPT_EXAMPLE_DIAGNOSTICS` | Opt-in production diagnostics                      | No              |
+| Variable                         | Purpose                                            | Required                  | Browser-visible |
+| -------------------------------- | -------------------------------------------------- | ------------------------- | --------------- |
+| `REOPT_DATA_BASE_URL`            | Origin of the reopt Data endpoint                  | No; defaults to local     | Indirectly      |
+| `REOPT_DATA_WRITE_KEY`           | Public project write key                           | No; SDK fails open        | Yes             |
+| `REOPT_DATA_CLIENT_ID`           | Server API client identifier                       | No; server SDK fails open | No              |
+| `REOPT_DATA_CLIENT_SECRET`       | Server API client secret                           | No; server SDK fails open | **Never**       |
+| `BETTER_AUTH_SECRET`             | Session-signing secret for the example application | Production only           | No              |
+| `BETTER_AUTH_URL`                | Public origin of this application                  | Production only           | Yes             |
+| `REOPT_DATA_EXAMPLE_DIAGNOSTICS` | Opt-in production diagnostics                      | No; defaults to `false`   | No              |
+| `REOPT_DATA_PATH`                | Path to a local `reopt-data` checkout              | Local SDK mode only       | No              |
 
-Do not add `NEXT_PUBLIC_` to the Reopt variables. The root layout resolves the
-write key on the server and passes only the public value through the client
+Do not add `NEXT_PUBLIC_` to the reopt Data variables. The root layout resolves
+the write key on the server and passes only the public value through the client
 component boundary. This makes the single-tenant environment fallback behave
 like the request-scoped multi-tenant implementation used by the example.
 
@@ -147,7 +150,7 @@ tab, added through the panel's `panels` prop. A customer application keeps the
 default.
 
 The SDK mode footer still exposes deployment metadata and stays hidden in
-production unless `REOPT_EXAMPLE_DIAGNOSTICS=true`; do not enable it in a
+production unless `REOPT_DATA_EXAMPLE_DIAGNOSTICS=true`; do not enable it in a
 customer application.
 
 | Route              | Integration exercised                                               |

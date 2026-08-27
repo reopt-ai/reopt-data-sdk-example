@@ -7,7 +7,7 @@ request, or commit.
 
 Use GitHub's **Report a vulnerability** flow for this repository when it is
 available. If private vulnerability reporting is unavailable, contact the
-Reopt maintainers through a private channel listed on the
+reopt maintainers through a private channel listed on the
 [`reopt-ai` organization profile](https://github.com/reopt-ai) and include the
 repository name in the subject.
 
@@ -38,12 +38,12 @@ vulnerability unless they can affect a real deployment or expose non-demo data.
 ## Credential handling
 
 - Never commit `.env`, `.env.local`, `.reopt-local.json`, or `.sdk-local/`.
-- A Reopt write key is public by design; a Reopt client secret is not.
-- Keep `REOPT_CLIENT_ID`, `REOPT_CLIENT_SECRET`, and authentication secrets in a
-  server-side secret store.
+- A reopt write key is public by design; a reopt client secret is not.
+- Keep `REOPT_DATA_CLIENT_ID`, `REOPT_DATA_CLIENT_SECRET`, and authentication
+  secrets in a server-side secret store.
 - Never add `NEXT_PUBLIC_` to server credentials.
 - Sanitize captured analytics payloads before sharing logs or screenshots.
-- Keep `REOPT_EXAMPLE_DIAGNOSTICS` disabled in production unless the deployment
-  is an isolated, controlled demo.
+- Keep `REOPT_DATA_EXAMPLE_DIAGNOSTICS` disabled in production unless the
+  deployment is an isolated, controlled demo.
 - Run `pnpm public:safety` before publishing. The pre-commit hook applies the
   same checks to staged files.

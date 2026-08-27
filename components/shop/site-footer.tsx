@@ -15,7 +15,7 @@ export function SiteFooter() {
           <p className="text-lg font-semibold tracking-tight">Arc Supply</p>
           <p className="mt-2 text-sm leading-6 text-text-secondary">
             A fictional workspace-goods store built as a production-shaped
-            reference for the Reopt Data SDK. Products and orders in this demo
+            reference for the reopt Data SDK. Products and orders in this demo
             are not real purchases.
           </p>
         </div>

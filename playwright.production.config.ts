@@ -26,7 +26,7 @@ export default defineConfig({
     env: {
       BETTER_AUTH_SECRET: "playwright-production-secret-32-characters-minimum",
       BETTER_AUTH_URL: "http://localhost:4200",
-      REOPT_EXAMPLE_DIAGNOSTICS: "true",
+      REOPT_DATA_EXAMPLE_DIAGNOSTICS: "true",
     },
     url: "http://localhost:4200",
     reuseExistingServer: false,

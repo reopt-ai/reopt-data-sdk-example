@@ -38,24 +38,24 @@ import { diagnosticsEnabled } from "@/lib/runtime-config";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.BETTER_AUTH_URL ?? "http://localhost:4100"),
   title: {
-    default: "Arc Supply — Reopt Data SDK Example",
+    default: "Arc Supply — reopt Data SDK Example",
     template: "%s · Arc Supply",
   },
   description:
-    "A production-shaped storefront demonstrating the Reopt Data SDK across browser, server, proxy, and worker boundaries.",
+    "A production-shaped storefront demonstrating the reopt Data SDK across browser, server, proxy, and worker boundaries.",
   applicationName: "Arc Supply",
   openGraph: {
     type: "website",
     siteName: "Arc Supply",
-    title: "Reopt Data SDK Example",
+    title: "reopt Data SDK Example",
     description:
-      "Explore a production-shaped reference implementation for the Reopt Data SDK.",
+      "Explore a production-shaped reference implementation for the reopt Data SDK.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Reopt Data SDK Example",
+    title: "reopt Data SDK Example",
     description:
-      "A production-shaped reference implementation for the Reopt Data SDK.",
+      "A production-shaped reference implementation for the reopt Data SDK.",
   },
 };
 

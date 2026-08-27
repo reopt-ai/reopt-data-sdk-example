@@ -40,7 +40,7 @@ export async function SiteHeader({ cartCount }: { cartCount: number }) {
           </span>
         </Link>
         <span className="hidden rounded-full border border-border bg-bg-subtle px-2.5 py-1 text-[11px] font-medium text-text-secondary xl:inline-flex">
-          Reopt SDK reference
+          reopt SDK reference
         </span>
         <nav
           className="ml-5 hidden items-center gap-5 text-sm md:flex"

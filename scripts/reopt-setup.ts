@@ -3,7 +3,7 @@
  * writes them to `.reopt-local.json` (gitignored).
  *
  *   pnpm reopt:setup                      # http://localhost:4001
- *   REOPT_BASE_URL=… pnpm reopt:setup
+ *   REOPT_DATA_BASE_URL=… pnpm reopt:setup
  *
  * Why a file and not env vars: the write key is resolved *per host* here, the
  * way a multi-brand storefront has to resolve it. The file is that store. It
@@ -16,14 +16,15 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const BASE = (process.env.REOPT_BASE_URL ?? "http://localhost:4001").replace(
-  /\/+$/,
-  "",
-);
-const EMAIL = process.env.REOPT_SETUP_EMAIL ?? "shop-example@reopt.local";
-const ORG_NAME = process.env.REOPT_SETUP_ORG ?? "reopt shop example";
-const PROJECT_NAME = process.env.REOPT_SETUP_PROJECT ?? "reopt-shop";
-const HOSTS = (process.env.REOPT_SETUP_HOSTS ?? "localhost:4100,127.0.0.1:4100")
+const BASE = (
+  process.env.REOPT_DATA_BASE_URL ?? "http://localhost:4001"
+).replace(/\/+$/, "");
+const EMAIL = process.env.REOPT_DATA_SETUP_EMAIL ?? "shop-example@reopt.local";
+const ORG_NAME = process.env.REOPT_DATA_SETUP_ORG ?? "reopt shop example";
+const PROJECT_NAME = process.env.REOPT_DATA_SETUP_PROJECT ?? "reopt-shop";
+const HOSTS = (
+  process.env.REOPT_DATA_SETUP_HOSTS ?? "localhost:4100,127.0.0.1:4100"
+)
   .split(",")
   .map((h) => h.trim());
 

@@ -45,7 +45,7 @@ export default function HomePage() {
           </h1>
           <p className="mt-5 max-w-lg text-base leading-7 text-white/75 sm:text-lg">
             Thoughtful tools for a calmer desk—built into a complete storefront
-            that demonstrates the Reopt Data SDK in a journey worth measuring.
+            that demonstrates the reopt Data SDK in a journey worth measuring.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/products" className="store-button focus-ring">

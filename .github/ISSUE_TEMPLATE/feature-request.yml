@@ -35,7 +35,7 @@ body:
     attributes:
       label: Scope checks
       options:
-        - label: This proposal teaches or validates a Reopt Data SDK integration pattern.
+        - label: This proposal teaches or validates a reopt Data SDK integration pattern.
           required: true
         - label: The storefront is only as complex as needed to demonstrate the SDK behavior.
           required: true

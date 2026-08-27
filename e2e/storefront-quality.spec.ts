@@ -66,7 +66,7 @@ test.describe("storefront quality", () => {
     await expect(page.locator("#main-content")).toBeFocused();
   });
 
-  test("publishes the generated favicon and Reopt SDK social card", async ({
+  test("publishes the generated favicon and reopt SDK social card", async ({
     page,
     request,
   }) => {
@@ -74,11 +74,11 @@ test.describe("storefront quality", () => {
 
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       "content",
-      "Reopt Data SDK Example",
+      "reopt Data SDK Example",
     );
     await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute(
       "content",
-      "Reopt Data SDK Example",
+      "reopt Data SDK Example",
     );
 
     const socialImage = await page

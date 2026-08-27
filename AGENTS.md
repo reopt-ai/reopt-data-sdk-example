@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Reopt Data SDK Example — repository instructions
+# reopt Data SDK Example — repository instructions
 
 This application is the public, production-shaped reference for
 `@reopt-ai/data-sdk-client` and `@reopt-ai/data-sdk-server`. The storefront
@@ -30,7 +30,7 @@ exists to make integration patterns observable; SDK boundaries are the product.
 - Work on `staging`. The user opens the pull request to `main`.
 - Never create a remote or push unless the user explicitly asks.
 - Never expose diagnostic surfaces in production unless
-  `REOPT_EXAMPLE_DIAGNOSTICS=true` was an explicit deployment decision.
+  `REOPT_DATA_EXAMPLE_DIAGNOSTICS=true` was an explicit deployment decision.
 
 ## Validation
 

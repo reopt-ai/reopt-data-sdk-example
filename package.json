@@ -2,7 +2,7 @@
   "name": "reopt-data-sdk-example",
   "version": "0.1.0",
   "private": true,
-  "description": "A production-shaped Next.js reference for the Reopt Data SDK client and server packages.",
+  "description": "A production-shaped Next.js reference for the reopt Data SDK client and server packages.",
   "keywords": [
     "reopt",
     "analytics",

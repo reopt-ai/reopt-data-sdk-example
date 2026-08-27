@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Arc Supply — Reopt Data SDK Example",
+    name: "Arc Supply — reopt Data SDK Example",
     short_name: "Arc Supply",
     description:
-      "A production-shaped storefront demonstrating the Reopt Data SDK.",
+      "A production-shaped storefront demonstrating the reopt Data SDK.",
     start_url: "/",
     display: "standalone",
     background_color: "#f7f4ed",

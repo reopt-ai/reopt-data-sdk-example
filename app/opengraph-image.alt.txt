@@ -1,1 +1,1 @@
-Reopt Data SDK Example — Browser, Server, Proxy, and Worker
+reopt Data SDK Example — Browser, Server, Proxy, and Worker
