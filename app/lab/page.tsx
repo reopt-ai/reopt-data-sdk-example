@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@reopt-ai/opt-ui";
+import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 
 import { InstrumentationLab } from "@/components/reopt/instrumentation-lab";
@@ -24,8 +25,10 @@ export default async function LabPage({
 }: {
   searchParams: Promise<{ demoRunId?: string | string[] }>;
 }) {
-  const flags = parseFlags((await cookies()).get(FLAGS_COOKIE)?.value);
   const showDiagnostics = diagnosticsEnabled();
+  if (!showDiagnostics) notFound();
+
+  const flags = parseFlags((await cookies()).get(FLAGS_COOKIE)?.value);
   const demoRunId = validRunId((await searchParams).demoRunId);
 
   return (
@@ -35,15 +38,13 @@ export default async function LabPage({
           Instrumentation lab
         </h1>
         <p className="mt-3 text-lg leading-8 text-text-secondary">
-          {showDiagnostics
-            ? "Trigger automatic events on demand and inspect them in SDK devtools."
-            : "Trigger browser-side automatic events on demand. Server diagnostics are disabled in production."}
+          Trigger automatic events on demand and inspect them in SDK devtools.
         </p>
       </header>
 
       <InstrumentationLab
         exceptionsEnabled={flags.exceptions}
-        serverDiagnosticsEnabled={showDiagnostics}
+        serverDiagnosticsEnabled
         {...(demoRunId ? { demoRunId } : {})}
       />
 

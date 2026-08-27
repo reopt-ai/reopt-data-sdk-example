@@ -25,12 +25,13 @@ import { Providers } from "@/app/providers";
 import { AnalyticsProvider } from "@/components/reopt/analytics-provider";
 import { ConsentBanner } from "@/components/reopt/consent-banner";
 import { DevtoolsDrawer } from "@/components/reopt/devtools-drawer";
-import { SdkModeFooter } from "@/components/reopt/sdk-mode-footer";
+import { DiagnosticAnalyticsProvider } from "@/components/reopt/diagnostic-analytics-provider";
+import { SdkVersionFooter } from "@/components/reopt/sdk-version-footer";
 import { SiteHeader } from "@/components/shop/site-header";
 import { SiteFooter } from "@/components/shop/site-footer";
 import { cartCount } from "@/lib/shop/cart-session";
 import { FLAGS_COOKIE, parseFlags } from "@/lib/reopt/flags";
-import { sdkModeSummary } from "@/lib/reopt/sdk-mode";
+import { sdkVersionSummary } from "@/lib/reopt/sdk-versions";
 import { currentConsentDefault, getBootstrap } from "@/lib/reopt/server";
 import { reoptBaseUrl, tenantForHost } from "@/lib/reopt/tenants";
 import { diagnosticsEnabled } from "@/lib/runtime-config";
@@ -77,9 +78,17 @@ export default async function RootLayout({
   const bootstrap = await getBootstrap();
   const consentDefault = await currentConsentDefault();
   const showDiagnostics = diagnosticsEnabled();
+  const ReoptBoundary = showDiagnostics
+    ? DiagnosticAnalyticsProvider
+    : AnalyticsProvider;
 
   return (
-    <html lang="en" data-theme="default" suppressHydrationWarning>
+    <html
+      lang="en"
+      data-theme="default"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <body>
         <Script
           id="theme-boot"
@@ -87,7 +96,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }}
         />
         <Providers>
-          <AnalyticsProvider
+          <ReoptBoundary
             config={{
               // Resolved per request, never from a public env var.
               writeKey: flags.noWriteKey ? null : (tenant?.writeKey ?? null),
@@ -99,7 +108,10 @@ export default async function RootLayout({
             bootstrap={flags.noBootstrap ? null : bootstrap}
           >
             <div className="flex min-h-screen flex-col">
-              <SiteHeader cartCount={await cartCount()} />
+              <SiteHeader
+                cartCount={await cartCount()}
+                diagnostics={showDiagnostics}
+              />
               <main
                 id="main-content"
                 tabIndex={-1}
@@ -107,22 +119,24 @@ export default async function RootLayout({
               >
                 {children}
               </main>
-              <SiteFooter />
-              {showDiagnostics && (
-                <SdkModeFooter
-                  mode={sdkModeSummary()}
+              <SiteFooter diagnostics={showDiagnostics} />
+              {showDiagnostics ? (
+                <SdkVersionFooter
+                  versions={sdkVersionSummary()}
                   tenant={tenant?.name ?? null}
                   writeKey={
                     flags.noWriteKey ? null : (tenant?.writeKey ?? null)
                   }
                   baseUrl={reoptBaseUrl()}
                 />
-              )}
+              ) : null}
             </div>
-            <ConsentBanner external={flags.externalConsent} />
-            {/* Always on, production included — see lib/reopt/devtools.ts. */}
-            <DevtoolsDrawer />
-          </AnalyticsProvider>
+            <ConsentBanner
+              external={flags.externalConsent}
+              diagnostics={showDiagnostics}
+            />
+            {showDiagnostics ? <DevtoolsDrawer /> : null}
+          </ReoptBoundary>
         </Providers>
       </body>
     </html>

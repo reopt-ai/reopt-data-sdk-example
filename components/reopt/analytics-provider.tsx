@@ -12,7 +12,6 @@ import type { ReactNode } from "react";
 
 import type { Flags } from "@/lib/reopt/flags";
 import { normalizePath } from "@/lib/reopt/normalize-path";
-import { devtools } from "@/lib/reopt/devtools";
 
 /**
  * The client boundary for analytics.
@@ -37,23 +36,31 @@ export interface AnalyticsConfig {
   consentDefault: boolean;
 }
 
-export function AnalyticsProvider({
-  config,
-  bootstrap,
-  children,
-}: {
+export interface AnalyticsProviderProps {
   config: AnalyticsConfig;
   bootstrap: ReoptBootstrap | null;
   children: ReactNode;
-}) {
+}
+
+export type AnalyticsTransport = Pick<ReoptClientConfig, "fetch">;
+
+export function AnalyticsProvider(props: AnalyticsProviderProps) {
+  return <AnalyticsProviderWithTransport {...props} />;
+}
+
+export function AnalyticsProviderWithTransport({
+  config,
+  bootstrap,
+  transport,
+  children,
+}: AnalyticsProviderProps & { transport?: AnalyticsTransport }) {
   const clientConfig: ReoptClientConfig = {
     // A missing write key is a supported state, not a crash: the SDK warns once
     // and every call becomes a no-op. The shop must not care.
     writeKey: config.writeKey ?? "",
     baseUrl: config.baseUrl,
     normalizePath,
-    // The devtools recorder: the SDK sends through it and the panel reads it.
-    fetch: devtools.fetch,
+    ...transport,
     debug: config.flags.debug,
     capture: {
       // `<ReoptPageView />` owns page views when it is mounted. With the toggle

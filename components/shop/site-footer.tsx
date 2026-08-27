@@ -4,10 +4,13 @@ const FOOTER_LINKS = [
   { href: "/products", label: "Products" },
   { href: "/account", label: "Account" },
   { href: "/guide", label: "SDK map" },
-  { href: "/lab", label: "Instrumentation lab" },
 ];
 
-export function SiteFooter() {
+export function SiteFooter({ diagnostics }: { diagnostics: boolean }) {
+  const links = diagnostics
+    ? [...FOOTER_LINKS, { href: "/lab", label: "Instrumentation lab" }]
+    : FOOTER_LINKS;
+
   return (
     <footer className="border-t border-border bg-bg-subtle">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
@@ -23,7 +26,7 @@ export function SiteFooter() {
           aria-label="Footer"
           className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm"
         >
-          {FOOTER_LINKS.map((item) => (
+          {links.map((item) => (
             <Link
               key={item.href}
               href={item.href}

@@ -31,13 +31,14 @@ Reports that reproduce in `@reopt-ai/data-sdk-client`,
 redirected to the owning project so the fix can be released at the correct
 boundary.
 
-The demo accounts, in-memory commerce data, and local development authentication
-flow are intentionally non-production. Their presence is not itself a
+The demo accounts and in-memory commerce data are intentionally non-production.
+Their presence is not itself a
 vulnerability unless they can affect a real deployment or expose non-demo data.
 
 ## Credential handling
 
-- Never commit `.env`, `.env.local`, `.reopt-local.json`, or `.sdk-local/`.
+- Never commit `.env*` files (except `.env.example`), `.reopt-example/`,
+  `.reopt-local.json`, or `.sdk-local/`.
 - A reopt write key is public by design; a reopt client secret is not.
 - Keep `REOPT_DATA_CLIENT_ID`, `REOPT_DATA_CLIENT_SECRET`, and authentication
   secrets in a server-side secret store.
@@ -45,5 +46,6 @@ vulnerability unless they can affect a real deployment or expose non-demo data.
 - Sanitize captured analytics payloads before sharing logs or screenshots.
 - Keep `REOPT_DATA_EXAMPLE_DIAGNOSTICS` disabled in production unless the
   deployment is an isolated, controlled demo.
-- Run `pnpm public:safety` before publishing. The pre-commit hook applies the
-  same checks to staged files.
+- Run `pnpm public:safety` before publishing. It scans the current tree and
+  reachable Git history for high-confidence secret patterns; the pre-commit
+  hook applies the current-tree checks to staged files.

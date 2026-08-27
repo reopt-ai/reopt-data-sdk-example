@@ -8,12 +8,20 @@ import { currentSession } from "@/lib/auth";
 const NAV = [
   { href: "/products", label: "Shop" },
   { href: "/orders", label: "Orders" },
-  { href: "/lab", label: "Lab" },
   { href: "/guide", label: "SDK map" },
 ];
 
-export async function SiteHeader({ cartCount }: { cartCount: number }) {
+export async function SiteHeader({
+  cartCount,
+  diagnostics,
+}: {
+  cartCount: number;
+  diagnostics: boolean;
+}) {
   const session = await currentSession();
+  const navigation = diagnostics
+    ? [...NAV, { href: "/lab", label: "Lab" }]
+    : NAV;
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur-xl">
@@ -46,7 +54,7 @@ export async function SiteHeader({ cartCount }: { cartCount: number }) {
           className="ml-5 hidden items-center gap-5 text-sm md:flex"
           aria-label="Primary"
         >
-          {NAV.map((item) => (
+          {navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -85,7 +93,7 @@ export async function SiteHeader({ cartCount }: { cartCount: number }) {
         className="flex scrollbar-none gap-5 overflow-x-auto border-t border-border-subtle px-4 py-2.5 text-sm md:hidden"
         aria-label="Primary mobile"
       >
-        {NAV.map((item) => (
+        {navigation.map((item) => (
           <Link
             key={item.href}
             href={item.href}

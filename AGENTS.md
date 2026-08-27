@@ -39,8 +39,8 @@ pnpm check
 pnpm e2e
 ```
 
-Without `.reopt-local.json`, real round-trip specs skip themselves and the
-fail-open contract still runs.
+Without a complete set of project environment variables, real round-trip specs
+skip themselves and the fail-open contract still runs.
 
 ## Project-specific integration notes
 

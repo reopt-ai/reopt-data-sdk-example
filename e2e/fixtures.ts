@@ -1,5 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import nextEnv from "@next/env";
 import { expect, type Page } from "@playwright/test";
 
 // Types only — erased at compile time. Reusing the devtool's own types keeps
@@ -32,25 +31,11 @@ import type { RecordedBatch, RecordedEvent } from "@reopt-ai/data-sdk-devtool";
 
 export type { RecordedBatch, RecordedEvent };
 
-/** Whether `pnpm reopt:setup` has run. Without it the SDK is fail-open and sends nothing. */
+nextEnv.loadEnvConfig(process.cwd());
+
+/** Whether a public project key is configured for analytics contract tests. */
 export function hasTenant(): boolean {
-  if (
-    process.env.REOPT_DATA_PROJECT_ID &&
-    process.env.REOPT_DATA_CLIENT_ID &&
-    process.env.REOPT_DATA_CLIENT_SECRET
-  ) {
-    return true;
-  }
-  const file = join(process.cwd(), ".reopt-local.json");
-  if (!existsSync(file)) return false;
-  try {
-    const store = JSON.parse(readFileSync(file, "utf8")) as {
-      projects?: unknown[];
-    };
-    return (store.projects?.length ?? 0) > 0;
-  } catch {
-    return false;
-  }
+  return Boolean(process.env.REOPT_DATA_WRITE_KEY);
 }
 
 export interface RoundtripTenant {
@@ -63,49 +48,23 @@ export interface RoundtripTenant {
 /** Server-only test credentials. Never evaluate this inside the browser page. */
 export function roundtripTenant(): RoundtripTenant | null {
   if (
+    process.env.REOPT_DATA_WRITE_KEY &&
     process.env.REOPT_DATA_PROJECT_ID &&
     process.env.REOPT_DATA_CLIENT_ID &&
     process.env.REOPT_DATA_CLIENT_SECRET
   ) {
     return {
-      baseUrl: process.env.REOPT_DATA_BASE_URL ?? "http://localhost:4001",
+      baseUrl: process.env.REOPT_DATA_BASE_URL ?? "https://data.reopt.ai",
       projectId: process.env.REOPT_DATA_PROJECT_ID,
       clientId: process.env.REOPT_DATA_CLIENT_ID,
       clientSecret: process.env.REOPT_DATA_CLIENT_SECRET,
     };
   }
-  const file = join(process.cwd(), ".reopt-local.json");
-  if (!existsSync(file)) return null;
-  try {
-    const store = JSON.parse(readFileSync(file, "utf8")) as {
-      baseUrl?: string;
-      projects?: Array<{
-        projectId?: string;
-        clientId?: string;
-        clientSecret?: string;
-      }>;
-    };
-    const project = store.projects?.[0];
-    if (
-      !store.baseUrl ||
-      !project?.projectId ||
-      !project.clientId ||
-      !project.clientSecret
-    )
-      return null;
-    return {
-      baseUrl: store.baseUrl,
-      projectId: project.projectId,
-      clientId: project.clientId,
-      clientSecret: project.clientSecret,
-    };
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 export const NO_TENANT_REASON =
-  "No complete reopt tenant is configured. Run `pnpm dev:stack` or provide the deployment credentials.";
+  "No reopt project is configured. Set REOPT_DATA_WRITE_KEY to run analytics contract tests.";
 
 /** Sets the SDK option cookie before the first load, so the client is created with it. */
 export async function setFlags(page: Page, flags: string): Promise<void> {

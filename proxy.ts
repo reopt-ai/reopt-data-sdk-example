@@ -1,10 +1,11 @@
 /**
- * Proxy — tenant resolution first, reopt last.
+ * Proxy — public project resolution first, reopt last.
  *
  * Two jobs, in this order:
  *
- * 1. Work out which project this host belongs to. This stands in for the host
- *    routing a real multi-brand storefront does here.
+ * 1. Resolve the public project configuration for this request. The example's
+ *    adapter serves one environment project; a multi-brand app can replace it
+ *    with host-aware lookup at the same boundary.
  * 2. Hand the response to `reoptProxy`, which seeds the visitor's device cookie
  *    and rewrites `/ingest/*` onto the reopt-data deployment.
  *
@@ -12,7 +13,7 @@
  * a cookie: a redirect or a rewrite to somewhere else would carry a `Set-Cookie`
  * the browser never applies to a page of ours.
  *
- * @see lib/reopt/tenants.ts — the host → project store
+ * @see lib/reopt/tenants.ts — the request-safe public project adapter
  */
 
 import { reoptProxy } from "@reopt-ai/data-sdk-server/proxy";

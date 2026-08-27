@@ -1,37 +1,27 @@
 import "server-only";
 
-import { headers } from "next/headers";
-
-import { storedTenantForHost, unsafeTenantStore } from "./tenants";
-
 export interface ServerCredentials {
   clientId: string;
   clientSecret: string;
 }
 
-/** Server credentials for the project selected by the current request host. */
-export async function currentServerCredentials(): Promise<ServerCredentials | null> {
-  const tenant = storedTenantForHost((await headers()).get("host"));
-  if (!tenant?.clientId || !tenant.clientSecret) return null;
-  return { clientId: tenant.clientId, clientSecret: tenant.clientSecret };
+function serverCredentials(): ServerCredentials | null {
+  const clientId = process.env.REOPT_DATA_CLIENT_ID;
+  const clientSecret = process.env.REOPT_DATA_CLIENT_SECRET;
+  if (!clientId || !clientSecret) return null;
+  return { clientId, clientSecret };
 }
 
-/**
- * Startup credentials for instrumentation, which has no request host. The
- * example supports one instrumentation project; request tracking remains
- * fully host-resolved.
- */
+/** Server credentials for SDK operations made during the current request. */
+export async function currentServerCredentials(): Promise<ServerCredentials | null> {
+  return serverCredentials();
+}
+
+/** Startup credentials for instrumentation, which has no request context. */
 export function instrumentationCredentials():
-  | (ServerCredentials & {
-      writeKey: string;
-    })
-  | null {
-  const tenant = unsafeTenantStore()?.projects[0];
-  if (!tenant?.clientId || !tenant.clientSecret || !tenant.writeKey)
-    return null;
-  return {
-    writeKey: tenant.writeKey,
-    clientId: tenant.clientId,
-    clientSecret: tenant.clientSecret,
-  };
+  (ServerCredentials & { writeKey: string }) | null {
+  const credentials = serverCredentials();
+  const writeKey = process.env.REOPT_DATA_WRITE_KEY;
+  if (!credentials || !writeKey) return null;
+  return { ...credentials, writeKey };
 }

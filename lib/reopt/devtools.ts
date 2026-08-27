@@ -5,10 +5,9 @@ import { createDevtools } from "@reopt-ai/data-sdk-devtool";
  * through, and its store is what the panel, the Web Vitals table and the
  * Playwright specs read.
  *
- * `createDevtools()` is off under `NODE_ENV=production` on its own. This app
- * is the reference deployment for the SDK, so it forces the panel on: seeing
- * what the SDK sends is the point of the example, and the payloads it shows
- * belong to the visitor looking at them. A customer application keeps the
- * default.
+ * The instance is capable of recording in every build so an explicitly
+ * enabled production diagnostics deployment can use it. Importing this module
+ * does not patch global fetch or expose a global by itself: the server decides
+ * whether to wire `devtools.fetch` into the client and mount the panel.
  */
 export const devtools = createDevtools({ enabled: true });
