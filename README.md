@@ -344,6 +344,32 @@ restart:
 
 Never use these credentials outside the example application.
 
+## Use with coding-agent skills
+
+The [reopt-skills](https://github.com/reopt-ai/reopt-skills) repository ships
+two agent skills for the Data SDK. They install into Claude Code, Codex, Cursor,
+and other agents through the `skills` CLI and treat this repository as the
+assembled reference app — the place to see multi-tenant resolution, the ingest
+proxy, consent, identity, and the devtool working together in one Next.js app.
+
+```bash
+npx skills add reopt-ai/reopt-skills/data-sdk-install   # first install or upgrade
+npx skills add reopt-ai/reopt-skills/data-sdk-review    # read-only integration audit
+```
+
+- **`data-sdk-install`** pins a `reopt/data-sdk-agent-rules` block into the
+  consumer project's `AGENTS.md`, connects existing credentials (it never
+  creates Data resources), wires the Next.js proxy / bootstrap / provider, and
+  routes everything else to the installed package READMEs.
+- **`data-sdk-review`** audits an existing integration for credential
+  boundaries, proxy and bootstrap behavior, identity, consent, delivery, and
+  production devtool exposure without editing code.
+
+Both skills are version-gated against the SDK floor recorded in
+[COMPATIBILITY.md](https://github.com/reopt-ai/reopt-skills/blob/main/COMPATIBILITY.md).
+When the skills point you here, start from the [capability map](#capability-map)
+and the [patterns worth copying](#patterns-worth-copying).
+
 ## Project scope
 
 This is an integration reference, not a production commerce starter. Product
