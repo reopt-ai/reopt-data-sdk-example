@@ -6,7 +6,7 @@
  *   pnpm reopt:setup -- --rotate # rotate the server secret
  *   pnpm reopt:setup -- --reset  # clear this project's captured data
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const BASE = (
@@ -246,6 +246,10 @@ async function main(): Promise<void> {
   writeFileSync(OUTPUT, `${JSON.stringify(nextStore, null, 2)}\n`, {
     mode: 0o600,
   });
+  // `mode` only applies when Node creates the file. Reusing an older store
+  // must also repair permissions so a prior umask or tool cannot leave the
+  // server credential readable by other local users.
+  chmodSync(OUTPUT, 0o600);
   console.log(`[setup] credentials updated → ${OUTPUT}`);
   console.log(`[setup] hosts: ${HOSTS.join(", ")}`);
   console.log("[setup] start the integrated stack with `pnpm dev:stack`.");
