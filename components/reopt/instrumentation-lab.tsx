@@ -4,6 +4,8 @@ import { useReopt, useTrack } from "@reopt-ai/data-sdk-client/next";
 import { Badge, Button, Card, CardContent, toast } from "@reopt-ai/opt-ui";
 import { useState } from "react";
 
+import { REOPT_SCENARIOS } from "@/lib/reopt/scenarios";
+
 /**
  * Buttons for the events that normally happen to you rather than because of
  * you: an uncaught error, a manual capture, a server error, a flush, consent
@@ -12,9 +14,11 @@ import { useState } from "react";
 export function InstrumentationLab({
   exceptionsEnabled,
   serverDiagnosticsEnabled,
+  demoRunId,
 }: {
   exceptionsEnabled: boolean;
   serverDiagnosticsEnabled: boolean;
+  demoRunId?: string;
 }) {
   const {
     captureException,
@@ -151,7 +155,17 @@ export function InstrumentationLab({
             </Button>
             <Button
               size="sm"
-              onClick={() => track("lab.ping", { at: Date.now() })}
+              data-testid="send-sample-event"
+              onClick={() =>
+                track(REOPT_SCENARIOS.roundtrip.eventName, {
+                  at: Date.now(),
+                  [REOPT_SCENARIOS.roundtrip.sourceProperty]:
+                    REOPT_SCENARIOS.roundtrip.source,
+                  ...(demoRunId
+                    ? { [REOPT_SCENARIOS.roundtrip.runIdProperty]: demoRunId }
+                    : {}),
+                })
+              }
             >
               Send sample event
             </Button>

@@ -104,6 +104,7 @@ The relevant variables are:
 | `REOPT_DATA_WRITE_KEY`           | Public project write key                           | No; SDK fails open        | Yes             |
 | `REOPT_DATA_CLIENT_ID`           | Server API client identifier                       | No; server SDK fails open | No              |
 | `REOPT_DATA_CLIENT_SECRET`       | Server API client secret                           | No; server SDK fails open | **Never**       |
+| `REOPT_DATA_PROJECT_ID`          | Project queried by round-trip verification         | Verification only         | No              |
 | `BETTER_AUTH_SECRET`             | Session-signing secret for the example application | Production only           | No              |
 | `BETTER_AUTH_URL`                | Public origin of this application                  | Production only           | Yes             |
 | `REOPT_DATA_EXAMPLE_DIAGNOSTICS` | Opt-in production diagnostics                      | No; defaults to `false`   | No              |
@@ -120,17 +121,22 @@ process-local auth secret so the zero-configuration quick start remains useful.
 
 ### Connect a local reopt-data checkout
 
-When developing the SDK and backend together, start `reopt-data` at
-`http://localhost:4001`, then provision an isolated example project:
+When developing the SDK and backend together, start the complete linked loop:
 
 ```bash
-pnpm reopt:setup
-pnpm dev
+pnpm dev:stack
 ```
 
-`pnpm reopt:setup` creates an organization, project, and API client through the
-local development-only sign-in flow. It writes the resulting tenant mapping to
-`.reopt-local.json`, which is ignored by Git.
+This switches the four SDK packages to the sibling checkout, builds and watches
+their `dist/` output, starts reopt-data core services, provisions the example,
+and starts this app. `--full` starts every backend service; `--reset` clears the
+local project's captured data; `--rotate` rotates its server secret; and
+`--no-setup` leaves resources untouched.
+
+`pnpm reopt:setup` is idempotent. It reuses a valid API client with `ingest` and
+`query` scopes instead of minting one per run. Use `pnpm reopt:setup --status`,
+`--rotate`, or `--reset` independently. Credentials live only in the
+mode-`0600`, gitignored `.reopt-local.json` file.
 
 Session assignment also requires the local ingest worker and an
 `ENCRYPTION_KEY` in the reopt-data process. Events are still accepted when
@@ -284,13 +290,16 @@ pnpm sdk:npm
 
 Local and tarball modes manage explicit `pnpm-workspace.yaml` overrides instead
 of hidden `pnpm link` state. The diff and lockfile therefore reveal exactly
-which SDK is running. Local packages are consumed from `dist/`, so keep their
-builds active:
+which SDK is running. Local packages are consumed from `dist/`;
+`pnpm dev:stack` keeps dependency-aware build watchers active. For a manual
+loop, run:
 
 ```bash
-pnpm --dir ../reopt-data \
-  --filter @reopt-ai/data-sdk-client \
-  --filter @reopt-ai/data-sdk-server dev
+pnpm --dir ../reopt-data exec turbo watch build \
+  --filter=@reopt-ai/data-contract \
+  --filter=@reopt-ai/data-sdk-client \
+  --filter=@reopt-ai/data-sdk-devtool \
+  --filter=@reopt-ai/data-sdk-server
 ```
 
 Set `REOPT_DATA_PATH` when the checkout is not at `../reopt-data`.
@@ -301,6 +310,9 @@ Set `REOPT_DATA_PATH` when the checkout is not at `../reopt-data`.
 pnpm check          # Prettier check, oxlint, and TypeScript
 pnpm e2e            # Playwright against the development server
 pnpm e2e:production # Playwright against a production build
+pnpm verify:quick   # Fast implementation gate
+pnpm verify:full    # Check + development and production E2E
+pnpm e2e:roundtrip  # Browser → ingest → materialization → Query API
 ```
 
 The Playwright suite also protects the storefront quality bar: generated-image
@@ -308,8 +320,16 @@ loading, narrow-viewport overflow, keyboard access, and automated WCAG checks
 on the primary public routes run beside the SDK and security contracts.
 
 Set `SHOP_DEPLOYED_URL=https://...` and run `pnpm e2e:deployed` to exercise a
-deployed instance. When `.reopt-local.json` is absent, tests that require a real
-ingest round trip skip themselves; the fail-open contract still runs.
+deployed instance. With server credentials and `REOPT_DATA_PROJECT_ID` loaded,
+`pnpm e2e:roundtrip` records an ingest request id and polls the Query API for the
+same unique run id. When neither deployment credentials nor
+`.reopt-local.json` are available, real round-trip specs skip; the fail-open
+contract still runs.
+
+See [FEATURE_CHECKLIST.md](./FEATURE_CHECKLIST.md) before adopting another SDK
+capability. Return the workspace to `pnpm sdk:npm` before committing or
+deploying this standalone repository; `pnpm dev:stack` enables local links on
+startup.
 
 This repository intentionally does not use GitHub Actions. Contributors must
 run the required checks locally and report the results in the pull request.

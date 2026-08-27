@@ -34,6 +34,13 @@ export type { RecordedBatch, RecordedEvent };
 
 /** Whether `pnpm reopt:setup` has run. Without it the SDK is fail-open and sends nothing. */
 export function hasTenant(): boolean {
+  if (
+    process.env.REOPT_DATA_PROJECT_ID &&
+    process.env.REOPT_DATA_CLIENT_ID &&
+    process.env.REOPT_DATA_CLIENT_SECRET
+  ) {
+    return true;
+  }
   const file = join(process.cwd(), ".reopt-local.json");
   if (!existsSync(file)) return false;
   try {
@@ -46,8 +53,59 @@ export function hasTenant(): boolean {
   }
 }
 
+export interface RoundtripTenant {
+  baseUrl: string;
+  projectId: string;
+  clientId: string;
+  clientSecret: string;
+}
+
+/** Server-only test credentials. Never evaluate this inside the browser page. */
+export function roundtripTenant(): RoundtripTenant | null {
+  if (
+    process.env.REOPT_DATA_PROJECT_ID &&
+    process.env.REOPT_DATA_CLIENT_ID &&
+    process.env.REOPT_DATA_CLIENT_SECRET
+  ) {
+    return {
+      baseUrl: process.env.REOPT_DATA_BASE_URL ?? "http://localhost:4001",
+      projectId: process.env.REOPT_DATA_PROJECT_ID,
+      clientId: process.env.REOPT_DATA_CLIENT_ID,
+      clientSecret: process.env.REOPT_DATA_CLIENT_SECRET,
+    };
+  }
+  const file = join(process.cwd(), ".reopt-local.json");
+  if (!existsSync(file)) return null;
+  try {
+    const store = JSON.parse(readFileSync(file, "utf8")) as {
+      baseUrl?: string;
+      projects?: Array<{
+        projectId?: string;
+        clientId?: string;
+        clientSecret?: string;
+      }>;
+    };
+    const project = store.projects?.[0];
+    if (
+      !store.baseUrl ||
+      !project?.projectId ||
+      !project.clientId ||
+      !project.clientSecret
+    )
+      return null;
+    return {
+      baseUrl: store.baseUrl,
+      projectId: project.projectId,
+      clientId: project.clientId,
+      clientSecret: project.clientSecret,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export const NO_TENANT_REASON =
-  "`.reopt-local.json` is missing. Start local reopt-data and run `pnpm reopt:setup` first.";
+  "No complete reopt tenant is configured. Run `pnpm dev:stack` or provide the deployment credentials.";
 
 /** Sets the SDK option cookie before the first load, so the client is created with it. */
 export async function setFlags(page: Page, flags: string): Promise<void> {

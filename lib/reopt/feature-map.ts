@@ -130,4 +130,10 @@ export const FEATURE_MAP: FeatureRow[] = [
     what: "Lets Playwright assert real SDK payloads without intercepting ingest traffic",
     where: "e2e/*.spec.ts",
   },
+  {
+    area: "test",
+    api: "ingest requestId → Query API requestId",
+    what: "Tags one lab event with a run id and proves browser → ingest → materialization → query",
+    where: "e2e/roundtrip.spec.ts · lib/reopt/scenarios.ts",
+  },
 ];

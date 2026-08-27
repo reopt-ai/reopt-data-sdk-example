@@ -8,13 +8,25 @@ import { diagnosticsEnabled } from "@/lib/runtime-config";
 
 export const metadata = { title: "Instrumentation lab" };
 
+function validRunId(value: string | string[] | undefined): string | undefined {
+  const candidate = Array.isArray(value) ? value[0] : value;
+  return candidate && /^[0-9a-f-]{36}$/i.test(candidate)
+    ? candidate
+    : undefined;
+}
+
 /**
  * The automatic events, each with a way to make it happen on demand:
  * `$exception`, `$pageleave` with its scroll depth, `$web_vitals`.
  */
-export default async function LabPage() {
+export default async function LabPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ demoRunId?: string | string[] }>;
+}) {
   const flags = parseFlags((await cookies()).get(FLAGS_COOKIE)?.value);
   const showDiagnostics = diagnosticsEnabled();
+  const demoRunId = validRunId((await searchParams).demoRunId);
 
   return (
     <div className="flex flex-col gap-8">
@@ -32,6 +44,7 @@ export default async function LabPage() {
       <InstrumentationLab
         exceptionsEnabled={flags.exceptions}
         serverDiagnosticsEnabled={showDiagnostics}
+        {...(demoRunId ? { demoRunId } : {})}
       />
 
       <WebVitalsTable />

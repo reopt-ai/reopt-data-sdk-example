@@ -1,19 +1,12 @@
 /**
- * Mints the credentials this app needs from a running reopt-data instance and
- * writes them to `.reopt-local.json` (gitignored).
+ * Idempotently provisions the local reopt-data resources this example needs.
  *
- *   pnpm reopt:setup                      # http://localhost:4001
- *   REOPT_DATA_BASE_URL=… pnpm reopt:setup
- *
- * Why a file and not env vars: the write key is resolved *per host* here, the
- * way a multi-brand storefront has to resolve it. The file is that store. It
- * also keeps the server secret out of `.env`, where a `NEXT_PUBLIC_` typo is
- * one character away from shipping it to the browser.
- *
- * The dev-only sign-in route this uses exists only when reopt-data runs outside
- * production and on localhost.
+ *   pnpm reopt:setup             # create once, then reuse
+ *   pnpm reopt:setup -- --status # inspect without changing resources
+ *   pnpm reopt:setup -- --rotate # rotate the server secret
+ *   pnpm reopt:setup -- --reset  # clear this project's captured data
  */
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const BASE = (
@@ -22,15 +15,53 @@ const BASE = (
 const EMAIL = process.env.REOPT_DATA_SETUP_EMAIL ?? "shop-example@reopt.local";
 const ORG_NAME = process.env.REOPT_DATA_SETUP_ORG ?? "reopt shop example";
 const PROJECT_NAME = process.env.REOPT_DATA_SETUP_PROJECT ?? "reopt-shop";
+const CLIENT_NAME = `${PROJECT_NAME} · local`;
 const HOSTS = (
   process.env.REOPT_DATA_SETUP_HOSTS ?? "localhost:4100,127.0.0.1:4100"
 )
   .split(",")
-  .map((h) => h.trim());
-
+  .map((host) => host.trim())
+  .filter(Boolean);
 const OUTPUT = join(process.cwd(), ".reopt-local.json");
+const flags = new Set(process.argv.slice(2));
+
+interface Named {
+  id: string;
+  name: string;
+}
+
+interface ClientRecord extends Named {
+  projectId: string;
+  writeKey: string;
+  scopes: string[];
+  serverSecret?: string;
+}
+
+interface LocalProject {
+  hosts: string[];
+  name: string;
+  projectId: string;
+  writeKey: string;
+  clientId: string;
+  clientSecret: string;
+  scopes: string[];
+}
+
+interface LocalStore {
+  baseUrl: string;
+  projects: LocalProject[];
+}
 
 let sessionCookie = "";
+
+function readLocalStore(): LocalStore | null {
+  if (!existsSync(OUTPUT)) return null;
+  try {
+    return JSON.parse(readFileSync(OUTPUT, "utf8")) as LocalStore;
+  } catch {
+    return null;
+  }
+}
 
 async function trpc<T>(
   path: string,
@@ -41,7 +72,6 @@ async function trpc<T>(
     method === "GET"
       ? `${BASE}/api/trpc/${path}?input=${encodeURIComponent(JSON.stringify({ json: input }))}`
       : `${BASE}/api/trpc/${path}`;
-
   const response = await fetch(url, {
     method,
     headers: {
@@ -50,7 +80,6 @@ async function trpc<T>(
     },
     ...(method === "POST" ? { body: JSON.stringify({ json: input }) } : {}),
   });
-
   const body = (await response.json()) as {
     result?: { data?: { json?: T } };
     error?: { message?: string };
@@ -66,23 +95,16 @@ async function trpc<T>(
 async function signIn(): Promise<void> {
   const url = `${BASE}/api/reopt-auth/e2e/complete?token=reopt-auth-e2e&email=${encodeURIComponent(EMAIL)}&name=Shop%20Example`;
   const response = await fetch(url, { redirect: "manual" });
-
   const cookie = response.headers
     .getSetCookie()
     .map((entry) => entry.split(";")[0])
     .find((entry) => entry?.startsWith("reopt_session="));
-
   if (!cookie) {
     throw new Error(
-      `Sign-in failed (${response.status}). Confirm that reopt-data is running in development mode at ${BASE}.`,
+      `Sign-in failed (${response.status}). Confirm reopt-data development is running at ${BASE}.`,
     );
   }
   sessionCookie = cookie;
-}
-
-interface Named {
-  id: string;
-  name: string;
 }
 
 async function findOrCreate<T extends Named>(
@@ -92,15 +114,46 @@ async function findOrCreate<T extends Named>(
   createInput: { name: string } & Record<string, unknown>,
 ): Promise<T> {
   const existing = await trpc<T[]>(listPath, listInput, "GET");
-  const match = existing?.find((entry) => entry.name === createInput.name);
-  if (match) return match;
-  return trpc<T>(createPath, createInput);
+  return (
+    existing.find((entry) => entry.name === createInput.name) ??
+    trpc<T>(createPath, createInput)
+  );
+}
+
+async function showStatus(store: LocalStore | null): Promise<void> {
+  if (!store?.projects[0]) {
+    console.log(
+      "[setup] status: not configured (.reopt-local.json is absent or invalid)",
+    );
+    return;
+  }
+  const local = store.projects[0];
+  const clients = await trpc<ClientRecord[]>(
+    "apiClient.list",
+    { projectId: local.projectId },
+    "GET",
+  );
+  const remote = clients.find((client) => client.id === local.clientId);
+  console.log(`[setup] status: ${remote ? "ready" : "stale"}`);
+  console.log(`[setup] reopt-data: ${store.baseUrl}`);
+  console.log(`[setup] project: ${local.name} (${local.projectId})`);
+  console.log(`[setup] API client: ${local.clientId}`);
+  console.log(
+    `[setup] scopes: ${(remote?.scopes ?? local.scopes ?? []).join(", ") || "unknown"}`,
+  );
+  console.log(`[setup] hosts: ${local.hosts.join(", ")}`);
 }
 
 async function main(): Promise<void> {
   console.log(`[setup] reopt-data: ${BASE}`);
   await signIn();
   console.log(`[setup] signed in: ${EMAIL}`);
+
+  const existingStore = readLocalStore();
+  if (flags.has("--status")) {
+    await showStatus(existingStore);
+    return;
+  }
 
   const organization = await findOrCreate<Named>(
     "organization.list",
@@ -122,41 +175,80 @@ async function main(): Promise<void> {
   );
   console.log(`[setup] project: ${project.name} (${project.id})`);
 
-  // The server secret is shown once, at creation, so an existing client of the
-  // same name cannot be reused — a new one is minted each run.
-  const client = await trpc<{
-    id: string;
-    writeKey: string;
-    serverSecret: string;
-  }>("apiClient.create", {
-    projectId: project.id,
-    name: `${PROJECT_NAME} · ${new Date().toISOString().slice(0, 19)}`,
-  });
-  console.log(`[setup] API client: ${client.id}`);
+  if (flags.has("--reset")) {
+    await trpc("seed.clear", { projectId: project.id });
+    console.log("[setup] project data reset");
+  }
 
-  writeFileSync(
-    OUTPUT,
-    `${JSON.stringify(
-      {
-        baseUrl: BASE,
-        projects: [
-          {
-            hosts: HOSTS,
-            name: PROJECT_NAME,
-            writeKey: client.writeKey,
-            clientId: client.id,
-            clientSecret: client.serverSecret,
-          },
-        ],
-      },
-      null,
-      2,
-    )}\n`,
+  const clients = await trpc<ClientRecord[]>(
+    "apiClient.list",
+    { projectId: project.id },
+    "GET",
   );
+  const stored = existingStore?.projects.find(
+    (entry) => entry.projectId === project.id,
+  );
+  let client = stored
+    ? clients.find((entry) => entry.id === stored.clientId)
+    : undefined;
+  let clientSecret = stored?.clientSecret;
 
-  console.log(`[setup] wrote credentials → ${OUTPUT}`);
+  if (!client) client = clients.find((entry) => entry.name === CLIENT_NAME);
+  if (!client) {
+    client = await trpc<ClientRecord>("apiClient.create", {
+      projectId: project.id,
+      name: CLIENT_NAME,
+      scopes: ["ingest", "query"],
+    });
+    clientSecret = client.serverSecret;
+    console.log(`[setup] API client created: ${client.id}`);
+  } else if (!clientSecret || flags.has("--rotate")) {
+    client = await trpc<ClientRecord>("apiClient.regenerateSecret", {
+      clientId: client.id,
+    });
+    clientSecret = client.serverSecret;
+    console.log(`[setup] API client secret rotated: ${client.id}`);
+  } else {
+    console.log(`[setup] API client reused: ${client.id}`);
+  }
+
+  if (!client.scopes.includes("ingest") || !client.scopes.includes("query")) {
+    client = await trpc<ClientRecord>("apiClient.setScopes", {
+      clientId: client.id,
+      scopes: ["ingest", "query"],
+    });
+    console.log("[setup] API client scopes updated: ingest, query");
+  }
+  if (!clientSecret) throw new Error("API client secret was not returned");
+
+  for (const stale of clients.filter(
+    (entry) =>
+      entry.id !== client.id && entry.name.startsWith(`${PROJECT_NAME} · `),
+  )) {
+    await trpc("apiClient.delete", { clientId: stale.id });
+    console.log(`[setup] stale local API client removed: ${stale.id}`);
+  }
+
+  const nextStore: LocalStore = {
+    baseUrl: BASE,
+    projects: [
+      {
+        hosts: HOSTS,
+        name: PROJECT_NAME,
+        projectId: project.id,
+        writeKey: client.writeKey,
+        clientId: client.id,
+        clientSecret,
+        scopes: client.scopes,
+      },
+    ],
+  };
+  writeFileSync(OUTPUT, `${JSON.stringify(nextStore, null, 2)}\n`, {
+    mode: 0o600,
+  });
+  console.log(`[setup] credentials updated → ${OUTPUT}`);
   console.log(`[setup] hosts: ${HOSTS.join(", ")}`);
-  console.log("[setup] start the application with `pnpm dev`.");
+  console.log("[setup] start the integrated stack with `pnpm dev:stack`.");
 }
 
 main().catch((error: unknown) => {

@@ -19,9 +19,12 @@ interface StoredTenantRecord {
   /** Hosts this project answers for, `host:port` as the browser sends it. */
   hosts: string[];
   name: string;
+  /** Stable project id used by Query API verification and local tooling. */
+  projectId: string;
   writeKey: string;
   clientId: string;
   clientSecret: string;
+  scopes: string[];
 }
 
 export interface TenantStore {
@@ -47,13 +50,15 @@ const STORE_FILE = ".reopt-local.json";
 let cached: TenantStore | null = null;
 
 /**
- * The store as written by `pnpm reopt:setup`, or an env-var fallback so a
- * deployed copy can run without the file. `null` when neither is configured —
- * which is a supported state: the SDK fails open and the shop keeps working.
+ * An explicitly configured environment takes precedence over the local store.
+ * This keeps a machine-specific `.reopt-local.json` from overriding deployment
+ * or CI credentials if it is ever copied outside local development. `null`
+ * when neither is configured — which is a supported state: the SDK fails open
+ * and the shop keeps working.
  */
 export function unsafeTenantStore(): TenantStore | null {
   if (cached) return cached;
-  cached = readStoreFile() ?? storeFromEnv();
+  cached = storeFromEnv() ?? readStoreFile();
   return cached;
 }
 
@@ -97,9 +102,11 @@ function storeFromEnv(): TenantStore | null {
       {
         hosts: ["*"],
         name: "env",
+        projectId: process.env.REOPT_DATA_PROJECT_ID ?? "",
         writeKey,
         clientId: process.env.REOPT_DATA_CLIENT_ID ?? "",
         clientSecret: process.env.REOPT_DATA_CLIENT_SECRET ?? "",
+        scopes: ["ingest", "query"],
       },
     ],
   };

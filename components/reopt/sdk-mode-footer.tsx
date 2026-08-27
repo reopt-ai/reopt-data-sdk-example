@@ -23,7 +23,10 @@ export function SdkModeFooter({
   return (
     <footer className="border-t border-border px-6 py-4 text-xs text-text-secondary">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3">
-        <Badge variant={anyLocal ? "warning" : "default"}>
+        <Badge
+          variant={anyLocal ? "warning" : "default"}
+          className={anyLocal ? "text-[#6b4300]" : undefined}
+        >
           {anyLocal ? "SDK: local" : "SDK: npm"}
         </Badge>
         {mode.map((entry) => (
