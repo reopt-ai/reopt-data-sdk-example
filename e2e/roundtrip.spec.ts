@@ -30,7 +30,7 @@ test.describe("browser to query roundtrip", () => {
   // Managed Vercel Queue delivery can legitimately take around 30 seconds
   // from an idle consumer. Keep the ingest acceptance assertion fast, but
   // give the materialized analytics read enough room to cross that boundary.
-  test.setTimeout(90_000);
+  test.setTimeout(150_000);
 
   test("correlates one browser event through ingest and materialized query data", async ({
     page,
@@ -123,7 +123,7 @@ test.describe("browser to query roundtrip", () => {
           );
         },
         {
-          timeout: 60_000,
+          timeout: 120_000,
           intervals: [250, 500, 1_000, 2_000],
           message: "ingest data did not materialize",
         },
