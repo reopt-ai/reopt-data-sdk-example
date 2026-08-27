@@ -78,8 +78,8 @@ export const FEATURE_MAP: FeatureRow[] = [
   },
   {
     area: "browser",
-    api: "config.fetch",
-    what: "Injects the devtool recorder only when diagnostics are enabled",
+    api: "config.fetch / config.observe",
+    what: "Records sanitized transport and enqueue-time lifecycle only when diagnostics are enabled",
     where:
       "lib/reopt/devtools.ts · components/reopt/diagnostic-analytics-provider.tsx · components/reopt/devtools-drawer.tsx",
   },

@@ -7,8 +7,15 @@ import {
 } from "@/components/reopt/analytics-provider";
 import { devtools } from "@/lib/reopt/devtools";
 
+const observer = (
+  devtools as typeof devtools & {
+    observe?: (observation: unknown) => void;
+  }
+).observe;
+
 const DIAGNOSTIC_TRANSPORT: AnalyticsTransport = {
   fetch: devtools.fetch,
+  ...(observer ? { observe: observer } : {}),
 };
 
 /** Adds recorder hooks only for an explicitly diagnostic render. */
