@@ -30,17 +30,16 @@ body:
     id: sdk-versions
     attributes:
       label: SDK versions
-      description: Paste the output of `pnpm sdk:mode`.
+      description: Copy the installed @reopt-ai package versions from package.json or the /guide page.
       placeholder: "@reopt-ai/data-sdk-client@...; @reopt-ai/data-sdk-server@..."
     validations:
       required: true
   - type: dropdown
-    id: sdk-mode
+    id: execution-mode
     attributes:
-      label: SDK mode
+      label: Execution mode
       options:
-        - Published npm packages
-        - Local reopt-data checkout
+        - Local development with published packages
         - Fail-open (no credentials)
         - Deployed application
     validations:

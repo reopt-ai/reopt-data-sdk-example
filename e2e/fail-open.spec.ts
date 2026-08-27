@@ -31,6 +31,7 @@ test.describe("fail-open", () => {
     const totals = await page.evaluate(
       () => window.__reoptDevtools?.state().totals,
     );
+    expect(totals?.batches, "a disabled client must not send batches").toBe(0);
     expect(totals?.events, "a disabled client must not send events").toBe(0);
   });
 

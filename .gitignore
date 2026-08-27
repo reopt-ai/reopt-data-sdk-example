@@ -5,15 +5,13 @@ build
 dist
 coverage
 
-# local env
-.env
-.env.local
-.env.*.local
+# local env and demo worker state
+.env*
+!.env.example
+.reopt-example
 
-# reopt credentials minted by `pnpm reopt:setup`
+# Legacy private development artifacts must never become public.
 .reopt-local.json
-
-# local SDK tarballs / link state
 .sdk-local
 
 # playwright

@@ -74,13 +74,14 @@ export const FEATURE_MAP: FeatureRow[] = [
     area: "browser",
     api: "consent.persist:false / setConsent()",
     what: "Lets an external consent banner own persistence and synchronize the SDK",
-    where: "components/reopt/consent-banner.tsx",
+    where: "components/reopt/consent-banner.tsx · app/api/consent/route.ts",
   },
   {
     area: "browser",
     api: "config.fetch",
-    what: "Hands the SDK the @reopt-ai/data-sdk-devtool recorder, forced on in production",
-    where: "lib/reopt/devtools.ts · components/reopt/devtools-drawer.tsx",
+    what: "Injects the devtool recorder only when diagnostics are enabled",
+    where:
+      "lib/reopt/devtools.ts · components/reopt/diagnostic-analytics-provider.tsx · components/reopt/devtools-drawer.tsx",
   },
   {
     area: "browser",

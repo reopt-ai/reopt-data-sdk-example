@@ -1,38 +1,26 @@
 import { Badge } from "@reopt-ai/opt-ui";
 
-import type { SdkPackageMode } from "@/lib/reopt/sdk-mode";
+import type { SdkPackageVersion } from "@/lib/reopt/sdk-versions";
 
-/**
- * Which SDK build is loaded, which project the page was tracked under, and
- * where ingest goes. A server component: all three are server facts, and the
- * write key is public by design.
- */
-export function SdkModeFooter({
-  mode,
+/** Installed SDK versions and request configuration, shown in diagnostics. */
+export function SdkVersionFooter({
+  versions,
   tenant,
   writeKey,
   baseUrl,
 }: {
-  mode: SdkPackageMode[];
+  versions: SdkPackageVersion[];
   tenant: string | null;
   writeKey: string | null;
   baseUrl: string;
 }) {
-  const anyLocal = mode.some((entry) => entry.local);
-
   return (
     <footer className="border-t border-border px-6 py-4 text-xs text-text-secondary">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3">
-        <Badge
-          variant={anyLocal ? "warning" : "default"}
-          className={anyLocal ? "text-[#6b4300]" : undefined}
-        >
-          {anyLocal ? "SDK: local" : "SDK: npm"}
-        </Badge>
-        {mode.map((entry) => (
+        <Badge variant="default">SDK: npm</Badge>
+        {versions.map((entry) => (
           <span key={entry.name} className="font-mono">
             {entry.name.replace("@reopt-ai/", "")}@{entry.version}
-            {entry.path ? " · linked checkout" : ""}
           </span>
         ))}
         <span className="ml-auto flex flex-wrap items-center gap-3">

@@ -1,7 +1,7 @@
 import { Badge, Card, CardContent } from "@reopt-ai/opt-ui";
 
 import { FEATURE_MAP } from "@/lib/reopt/feature-map";
-import { sdkModeSummary } from "@/lib/reopt/sdk-mode";
+import { sdkVersionSummary } from "@/lib/reopt/sdk-versions";
 
 export const metadata = { title: "SDK capability map" };
 
@@ -14,7 +14,7 @@ const AREA_LABEL: Record<string, string> = {
 };
 
 export default function GuidePage() {
-  const mode = sdkModeSummary();
+  const versions = sdkVersionSummary();
 
   return (
     <div className="flex flex-col gap-8">
@@ -30,14 +30,11 @@ export default function GuidePage() {
 
       <Card className="bg-bg-subtle">
         <CardContent className="flex flex-wrap gap-4 py-5 text-sm">
-          {mode.map((entry) => (
+          {versions.map((entry) => (
             <span key={entry.name} className="font-mono">
               {entry.name}@{entry.version}
-              <Badge
-                className="ml-2"
-                variant={entry.local ? "warning" : "default"}
-              >
-                {entry.local ? "local" : "npm"}
+              <Badge className="ml-2" variant="default">
+                npm
               </Badge>
             </span>
           ))}

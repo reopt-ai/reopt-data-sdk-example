@@ -1,10 +1,9 @@
-# Local SDK setup contains machine-specific routing and credentials. The
-# deployed custom environment is configured through Vercel environment vars.
-.reopt-local.json
-
 # Local-only artifacts.
 .env*
 !.env.example
+.reopt-example/
+.reopt-local.json
+.sdk-local/
 .next/
 node_modules/
 playwright-report/

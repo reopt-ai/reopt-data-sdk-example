@@ -24,7 +24,13 @@ import { useClientSnapshot } from "@/lib/use-client-snapshot";
  */
 const DECISION_KEY = "shop_consent_decision";
 
-export function ConsentBanner({ external }: { external: boolean }) {
+export function ConsentBanner({
+  external,
+  diagnostics,
+}: {
+  external: boolean;
+  diagnostics: boolean;
+}) {
   const { setConsent } = useConsent();
   const [dismissed, setDismissed] = useState(false);
   const stored = useClientSnapshot(readDecision, null);
@@ -59,7 +65,7 @@ export function ConsentBanner({ external }: { external: boolean }) {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 p-4"
+      className={`fixed inset-x-0 z-40 p-4 ${diagnostics ? "bottom-10" : "bottom-0"}`}
       data-testid="consent-banner"
     >
       <Card className="mx-auto max-w-3xl shadow-[var(--opt-shadow-lg)]">
