@@ -30,7 +30,6 @@ test.describe("browser to query roundtrip", () => {
 
   test("correlates one browser event through ingest and materialized query data", async ({
     page,
-    request,
   }, testInfo) => {
     if (!tenant) return;
     const runId = randomUUID();
@@ -75,15 +74,20 @@ test.describe("browser to query roundtrip", () => {
       .poll(
         async () => {
           const now = new Date();
-          const response = await request.post(
+          // Use Node fetch instead of Playwright's request fixture. Playwright
+          // includes request headers in connection-error reports, which would
+          // disclose the server credential when a deployment URL is wrong.
+          const response = await fetch(
             `${tenant.baseUrl}/api/v1/query/events/timeseries`,
             {
+              method: "POST",
               headers: {
                 "cache-control": "no-cache",
+                "content-type": "application/json",
                 "reopt-client-id": tenant.clientId,
                 "reopt-client-secret": tenant.clientSecret,
               },
-              data: {
+              body: JSON.stringify({
                 projectId: tenant.projectId,
                 startDate: dateOnly(new Date(now.getTime() - 86_400_000)),
                 endDate: dateOnly(new Date(now.getTime() + 86_400_000)),
@@ -96,10 +100,10 @@ test.describe("browser to query roundtrip", () => {
                   },
                 ],
                 timezone: "UTC",
-              },
+              }),
             },
           );
-          expect(response.ok(), `Query API returned ${response.status()}`).toBe(
+          expect(response.ok, `Query API returned ${response.status}`).toBe(
             true,
           );
           const body = (await response.json()) as {
