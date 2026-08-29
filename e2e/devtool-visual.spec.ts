@@ -1,5 +1,30 @@
 import { expect, test } from "@playwright/test";
 
+import { waitForHydration } from "./fixtures";
+
+test("status bar separates analytics session from signed-in profile", async ({
+  page,
+}) => {
+  await page.goto("/account");
+  await waitForHydration(page);
+
+  const identity = page.getByTestId("devtools-identity-summary");
+  await expect(identity).toContainText("anonymous");
+  await expect(identity).toHaveAttribute("data-profile", "anonymous");
+  await expect(identity).toHaveAttribute("data-session", /^(active|none)$/, {
+    timeout: 15_000,
+  });
+  await expect(identity).toContainText(/session active|no session/);
+
+  await page.getByTestId("sign-in").click();
+  await expect(page.getByTestId("account-name")).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(identity).toContainText("signed in");
+  await expect(identity).toHaveAttribute("data-profile", "identified");
+  await expect(identity).toHaveAttribute("data-session", /^(active|none)$/);
+});
+
 test("new event cards reveal once on phase-colored surfaces", async ({
   page,
 }) => {

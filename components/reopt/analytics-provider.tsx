@@ -69,6 +69,9 @@ export function AnalyticsProviderWithTransport({
       // `<ReoptPageView />` owns page views when it is mounted. With the toggle
       // off, nothing sends one automatically and the pages do it themselves.
       exceptions: config.flags.exceptions,
+      // Off by default even here: breadcrumbs are recorded on every page,
+      // failing or not, so a host should opt into that cost deliberately.
+      exceptionSteps: config.flags.exceptionSteps,
     },
     ...(config.flags.tracingHeaders ? { tracingHeaders: true } : {}),
     ...(config.flags.externalConsent
