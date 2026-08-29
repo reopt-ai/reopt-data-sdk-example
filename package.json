@@ -28,7 +28,7 @@
     "dev": "next dev -p 4100",
     "dev:stack": "node scripts/dev-stack.mjs",
     "build": "next build",
-    "postbuild": "reopt-data inject-chunk-ids --dir .next/static && reopt-data upload-sourcemaps --dir .next/static --url-prefix ${REOPT_DATA_ASSET_PREFIX:-http://localhost:4100/_next/static} --dry-run",
+    "postbuild": "reopt-data inject-chunk-ids --dir .next/static && reopt-data upload-sourcemaps --dir .next/static --url-prefix ${REOPT_DATA_ASSET_PREFIX:-http://localhost:4100/_next/static} --dry-run ${REOPT_DATA_DELETE_MAPS:+--delete-after-upload}",
     "start": "node scripts/start.mjs",
     "lint": "oxlint . --report-unused-disable-directives",
     "lint:fix": "oxlint . --fix",
