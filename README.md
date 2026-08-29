@@ -238,6 +238,22 @@ stamps it onto frames, so the maps keep matching when the host, the base path,
 or the preview URL changes. It is optional; skip it and matching falls back to
 the URL.
 
+This app is one project with its own build, so it uploads by URL. A deployment
+that renders _many_ projects — a brand front end on each brand's own domain —
+uploads once for the whole bundle instead, keyed by path:
+
+```bash
+reopt-data upload-sourcemaps --dir .next/static \
+  --path-prefix /_next/static \
+  --host-app studio-web \
+  --organization-id "$REOPT_DATA_ORGANIZATION_ID" \
+  --silent
+```
+
+The origin is the part that differs per brand, so it is the part the ref leaves
+out. Each project then points at the host app in its settings. `--silent` prints
+one summary line, which is what a build log wants.
+
 `next.config.ts` sets `productionBrowserSourceMaps: true` — without it the
 production build emits no browser maps and there is nothing to upload. Note
 that it also serves those maps publicly.
