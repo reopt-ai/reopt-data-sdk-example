@@ -25,3 +25,7 @@ blob-report
 .turbo
 .vercel
 .DS_Store
+
+# Synthetic source-map fixtures (scripts/sourcemap-stress.mjs). Disposable,
+# and a 1100-chunk set is ~32MB.
+.stress
