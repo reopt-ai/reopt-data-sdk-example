@@ -47,19 +47,33 @@ function run(command, args, cwd = root) {
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
+/**
+ * Remove the managed block, marker lines and all.
+ *
+ * Whole lines, not `indexOf(marker)`. Prettier indents a comment that sits
+ * inside a YAML mapping, so after one format the markers are no longer at
+ * column 0 — and slicing at the `#` left those two spaces behind, glued to the
+ * next entry. Two spaces per round, until `pnpm install` refused the file with
+ * "bad indentation of a mapping entry".
+ */
 function stripManagedBlock(text) {
-  const start = text.indexOf(marker);
+  const lines = text.split("\n");
+  const start = lines.findIndex((line) => line.trim() === marker);
   if (start === -1) return text;
-  const end = text.indexOf(markerEnd, start);
+  const end = lines.findIndex(
+    (line, index) => index >= start && line.trim() === markerEnd,
+  );
   if (end === -1) throw new Error("sdk:local workspace block is incomplete");
-  return text.slice(0, start) + text.slice(end + markerEnd.length + 1);
+  return [...lines.slice(0, start), ...lines.slice(end + 1)].join("\n");
 }
 
 function writeOverrides(lines) {
   const clean = stripManagedBlock(readFileSync(workspaceFile, "utf8"));
+  // Markers indented to match the mapping they live in, so the formatter has
+  // nothing to move and the next strip finds them where it left them.
   const next = clean.replace(
     /^overrides:$/m,
-    `overrides:\n${marker}\n${lines.join("\n")}\n${markerEnd}`,
+    `overrides:\n  ${marker}\n${lines.join("\n")}\n  ${markerEnd}`,
   );
   writeFileSync(workspaceFile, next);
 }
