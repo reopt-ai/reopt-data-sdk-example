@@ -262,6 +262,19 @@ The `postbuild` here ends in `--dry-run`, so a clone that has no credentials
 still builds. Drop the flag and pass `--api-key` (or `REOPT_DATA_API_KEY`) to
 upload for real.
 
+**Delete the maps after uploading them, in production.** `next.config.ts`
+serves them publicly, which means the deployment hands anyone the original
+source next to the bundle that minified it. That is deliberate here — this app
+exists to be read, and the devtool demo shows maps resolving — but it is not
+what you want in your own deployment.
+
+`REOPT_DATA_DELETE_MAPS=1` adds `--delete-after-upload`, which removes each
+`.map` the run actually stored. A map that failed to upload is left alone: it
+is the only copy, and the next run needs it to retry.
+
+It does nothing while `--dry-run` is still on the command — a dry run stores
+nothing, so there is nothing to delete. Set it together with a real upload.
+
 ## Validation
 
 ```bash
