@@ -124,10 +124,30 @@ event data.
 | `/account`         | `identify()` on sign-in and `reset()` on sign-out                    |
 | `/guide`           | Capability-to-source map and installed npm package versions          |
 | `/lab`             | Diagnostics-only exceptions, Web Vitals, consent, and queue controls |
+| `/debug/errors`    | Every exception shape, with breadcrumbs and a failing route handler  |
 
 The diagnostics settings exercise automatic page-view ownership, exception
-capture, an external consent manager, tracing headers, missing bootstrap,
-missing write key, and debug logging.
+capture, exception breadcrumbs, an external consent manager, tracing headers,
+missing bootstrap, missing write key, and debug logging.
+
+### Error tracking (`/debug/errors`)
+
+Six buttons, one per shape the issue detail renders differently:
+
+| Button              | What it exercises                                                               |
+| ------------------- | ------------------------------------------------------------------------------- |
+| Throw TypeError     | `window.onerror`, an in-app stack frame                                         |
+| Unhandled rejection | `unhandledrejection`, a different listener from `onerror`                       |
+| Capture handled     | `captureException(error, { level: "warning", fingerprint })` — its own grouping |
+| Throw a string      | A non-Error throw the SDK has to synthesize an Error for                        |
+| Throw a cause chain | `cause` three deep, which the detail shows as a chain                           |
+| Trigger server 500  | `/api/debug/error` → `onRequestError` in `instrumentation.ts`                   |
+
+Turn **Exception capture** on in the SDK settings first: four of the six throw
+rather than report, and with capture off nothing reaches the server. Turn
+**Exception breadcrumbs** on as well to send `$exception_steps` — every button
+records a step before it acts, so whichever one throws carries the trail of the
+clicks before it.
 
 ## Capability map
 
@@ -148,6 +168,8 @@ capability changes.
 | Browser | `identify()` / `reset()`                               | `components/shop/account-panel.tsx`                                                                                     |
 | Browser | `getDeviceId()`                                        | `components/shop/checkout-form.tsx`                                                                                     |
 | Browser | `capture.exceptions` / `captureException()`            | `components/reopt/instrumentation-lab.tsx`                                                                              |
+| Browser | `captureException(error, { level, fingerprint })`      | `components/reopt/error-lab.tsx`                                                                                        |
+| Browser | `capture.exceptionSteps` / `addExceptionStep()`        | `components/reopt/error-lab.tsx`                                                                                        |
 | Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts`                                                      |
 | Browser | `config.fetch / config.observe`                        | `lib/reopt/devtools.ts` · `components/reopt/diagnostic-analytics-provider.tsx` · `components/reopt/devtools-drawer.tsx` |
 | Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx`                                                                              |
@@ -189,8 +211,40 @@ The diagnostic test suite injects the devtool recorder as
 `ReoptClientConfig.fetch` and `ReoptClientConfig.observe`. It inspects the
 sanitized payload and enqueue-time lifecycle produced by the SDK and still
 allows the request to reach ingest; it does not make a stubbed request look
-successful. The recorder and drawer live behind the diagnostic client boundary,
+successful. The status bar reports the profile (`anonymous` or `signed in`)
+separately from the signed analytics session, without displaying either
+identifier. The recorder and drawer live behind the diagnostic client boundary,
 so the production default requests neither.
+
+## Source maps
+
+A production stack names a minified chunk, which is not somewhere anyone can go
+and fix. Two build steps make it readable, wired here as `postbuild`:
+
+```bash
+reopt-data inject-chunk-ids  --dir .next/static
+reopt-data upload-sourcemaps --dir .next/static \
+  --url-prefix https://your-host/_next/static \
+  --project-id <id> --release "$VERCEL_GIT_COMMIT_SHA"
+```
+
+Both ship with `@reopt-ai/data-sdk-server`. The upload reads each chunk's
+trailing `//# sourceMappingURL` to find its map — **not** the chunk's name plus
+`.map`, which is wrong under turbopack — and uploads it under the URL a stack
+frame will actually name. Only maps the server does not already have are sent.
+
+`inject-chunk-ids` appends a content-derived id to each chunk and the SDK
+stamps it onto frames, so the maps keep matching when the host, the base path,
+or the preview URL changes. It is optional; skip it and matching falls back to
+the URL.
+
+`next.config.ts` sets `productionBrowserSourceMaps: true` — without it the
+production build emits no browser maps and there is nothing to upload. Note
+that it also serves those maps publicly.
+
+The `postbuild` here ends in `--dry-run`, so a clone that has no credentials
+still builds. Drop the flag and pass `--api-key` (or `REOPT_DATA_API_KEY`) to
+upload for real.
 
 ## Validation
 
