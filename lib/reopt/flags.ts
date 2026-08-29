@@ -24,6 +24,12 @@ export const FLAGS = {
       "capture.exceptions reports uncaught errors and unhandled rejections as $exception events.",
     default: false,
   },
+  exceptionSteps: {
+    label: "Exception breadcrumbs",
+    detail:
+      "capture.exceptionSteps sends the last 20 steps before a failure as $exception_steps.",
+    default: false,
+  },
   externalConsent: {
     label: "External consent manager",
     detail:

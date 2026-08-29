@@ -20,7 +20,11 @@ export async function SiteHeader({
 }) {
   const session = await currentSession();
   const navigation = diagnostics
-    ? [...NAV, { href: "/lab", label: "Lab" }]
+    ? [
+        ...NAV,
+        { href: "/lab", label: "Lab" },
+        { href: "/debug/errors", label: "Errors" },
+      ]
     : NAV;
 
   return (

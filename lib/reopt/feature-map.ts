@@ -72,6 +72,18 @@ export const FEATURE_MAP: FeatureRow[] = [
   },
   {
     area: "browser",
+    api: "captureException(error, { level, fingerprint })",
+    what: "Reports a handled failure at its own severity and with its own grouping",
+    where: "components/reopt/error-lab.tsx",
+  },
+  {
+    area: "browser",
+    api: "capture.exceptionSteps / addExceptionStep()",
+    what: "Carries the last steps before a failure as $exception_steps",
+    where: "components/reopt/error-lab.tsx",
+  },
+  {
+    area: "browser",
     api: "consent.persist:false / setConsent()",
     what: "Lets an external consent banner own persistence and synchronize the SDK",
     where: "components/reopt/consent-banner.tsx · app/api/consent/route.ts",
@@ -79,7 +91,7 @@ export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "browser",
     api: "config.fetch / config.observe",
-    what: "Records sanitized transport and enqueue-time lifecycle only when diagnostics are enabled",
+    what: "Records sanitized lifecycle and shows profile and signed-session state in the diagnostic status bar",
     where:
       "lib/reopt/devtools.ts · components/reopt/diagnostic-analytics-provider.tsx · components/reopt/devtools-drawer.tsx",
   },
