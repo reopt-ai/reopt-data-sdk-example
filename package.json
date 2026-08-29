@@ -53,7 +53,11 @@
     "sdk:tarball": "node scripts/sdk-mode.mjs tarball",
     "sdk:npm": "node scripts/sdk-mode.mjs npm",
     "commitlint": "commitlint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "stress:fixtures": "node scripts/sourcemap-stress.mjs --out .stress",
+    "stress:project": "reopt-data upload-sourcemaps --dir .stress --url-prefix https://stress.example/_next/static --project-id ${REOPT_DATA_PROJECT_ID}",
+    "stress:host": "reopt-data upload-sourcemaps --dir .stress --path-prefix /_next/static --host-app example-web --organization-id ${REOPT_DATA_ORGANIZATION_ID}",
+    "stress:platform": "reopt-data upload-sourcemaps --dir .stress --path-prefix /_next/static --host-app example-web --platform"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.1",
