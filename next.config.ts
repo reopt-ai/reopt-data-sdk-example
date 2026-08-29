@@ -21,6 +21,9 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // Browser source maps are what makes the uploaded symbol sets mean anything:
+  // without them a production stack names a minified chunk and stops there.
+  productionBrowserSourceMaps: true,
   ...(process.env.REOPT_DATA_LOCAL_LINKS === "true"
     ? {
         // Turbopack intentionally refuses linked files outside its root. The
