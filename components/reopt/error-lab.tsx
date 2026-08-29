@@ -106,7 +106,6 @@ export function ErrorLab({
                   // Not an Error. The SDK has to synthesize one, and the issue
                   // detail should still show a type and a message rather than
                   // an empty chain.
-                  // eslint-disable-next-line no-throw-literal
                   throw "Legacy code threw a string";
                 }, 0);
               }}
