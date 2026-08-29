@@ -258,9 +258,14 @@ one summary line, which is what a build log wants.
 production build emits no browser maps and there is nothing to upload. Note
 that it also serves those maps publicly.
 
-The `postbuild` here ends in `--dry-run`, so a clone that has no credentials
-still builds. Drop the flag and pass `--api-key` (or `REOPT_DATA_API_KEY`) to
-upload for real.
+`postbuild` decides what to do from the environment
+(`scripts/upload-sourcemaps.mjs`):
+
+| Environment                                       | What runs                                   |
+| ------------------------------------------------- | ------------------------------------------- |
+| no credentials                                    | `--dry-run` — a clone still builds          |
+| `REOPT_DATA_API_KEY` or `REOPT_DATA_PLATFORM_KEY` | a real upload                               |
+| …plus `REOPT_DATA_DELETE_MAPS=1`                  | a real upload, then `--delete-after-upload` |
 
 **Delete the maps after uploading them, in production.** `next.config.ts`
 serves them publicly, which means the deployment hands anyone the original
@@ -268,12 +273,14 @@ source next to the bundle that minified it. That is deliberate here — this app
 exists to be read, and the devtool demo shows maps resolving — but it is not
 what you want in your own deployment.
 
-`REOPT_DATA_DELETE_MAPS=1` adds `--delete-after-upload`, which removes each
-`.map` the run actually stored. A map that failed to upload is left alone: it
-is the only copy, and the next run needs it to retry.
+`--delete-after-upload` removes each `.map` the run actually stored. A map that
+failed to upload is left alone: it is the only copy, and the next run needs it
+to retry.
 
-It does nothing while `--dry-run` is still on the command — a dry run stores
-nothing, so there is nothing to delete. Set it together with a real upload.
+Setting `REOPT_DATA_DELETE_MAPS=1` without credentials prints a warning and
+still does nothing — a dry run stores nothing, so there is nothing to delete.
+Finding that out from a `.map` still sitting in a deployment is the expensive
+way to learn it.
 
 ## Validation
 
