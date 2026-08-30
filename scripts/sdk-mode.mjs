@@ -24,6 +24,7 @@ const packages = [
   "@reopt-ai/data-sdk-client",
   "@reopt-ai/data-sdk-devtool",
   "@reopt-ai/data-sdk-server",
+  "@reopt-ai/data-cli",
 ];
 const monorepo = resolve(root, process.env.REOPT_DATA_PATH ?? "../reopt-data");
 const marker = "# BEGIN sdk:local — managed by scripts/sdk-mode.mjs";

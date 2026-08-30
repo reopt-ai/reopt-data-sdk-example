@@ -216,24 +216,68 @@ separately from the signed analytics session, without displaying either
 identifier. The recorder and drawer live behind the diagnostic client boundary,
 so the production default requests neither.
 
+## Linking the repository
+
+`reopt-data.config.mjs` at the root links this repository to its reopt-data
+project, the way `prisma.config.ts` links a schema to a database. It was written
+by `reopt-data link` and holds ids and paths only — keys stay in the environment:
+
+```js
+export default defineConfig({
+  projectId: "…",
+  organizationId: "…",
+  events: {
+    file: "./reopt-data.events.json",
+    types: "./lib/reopt-events.d.ts",
+  },
+  sourcemaps: {
+    dir: ".next/static",
+    urlPrefix: "http://localhost:4100/_next/static",
+  },
+});
+```
+
+Every `reopt-data` command reads its `--project-id`, `--file`, `--dir` … from
+here when the flag is absent, so the scripts below carry no ids.
+`reopt-data config show` prints what resolved.
+
+## Event catalogue
+
+`reopt-data.events.json` declares the events this app emits — `cart.added`,
+`checkout.submitted`, `order.completed`, plus the SDK's `$pageview` — with their
+display names, the conversion flag and the properties the hourly rollups break
+them down by. The file is the truth: CI pushes it, so the catalogue is bound to
+the same commit as the code that emits the events, instead of waiting for
+someone to open the dashboard.
+
+```bash
+pnpm events:verify   # CI gate — exit 8 when the file and the server disagree
+pnpm events:push     # apply the file (metric-changing and expensive changes included)
+pnpm events:types    # regenerate lib/reopt-events.d.ts for a typed track()
+```
+
+`reopt-data.events.lock.json` records the last sync so `reopt-data event diff`
+can tell an edit in this file from an edit made in the console. An event removed
+from the file is archived, never deleted.
+
 ## Source maps
 
 A production stack names a minified chunk, which is not somewhere anyone can go
 and fix. Two build steps make it readable, wired here as `postbuild`:
 
 ```bash
-reopt-data inject-chunk-ids  --dir .next/static
-reopt-data upload-sourcemaps --dir .next/static \
-  --url-prefix https://your-host/_next/static \
-  --project-id <id> --release "$VERCEL_GIT_COMMIT_SHA"
+reopt-data sourcemap inject
+reopt-data sourcemap upload --release "$VERCEL_GIT_COMMIT_SHA"
 ```
 
-Both ship with `@reopt-ai/data-sdk-server`. The upload reads each chunk's
-trailing `//# sourceMappingURL` to find its map — **not** the chunk's name plus
-`.map`, which is wrong under turbopack — and uploads it under the URL a stack
-frame will actually name. Only maps the server does not already have are sent.
+Both come from [`@reopt-ai/data-cli`](https://www.npmjs.com/package/@reopt-ai/data-cli);
+the build directory and URL prefix come from the config. The upload reads each
+chunk's trailing `//# sourceMappingURL` to find its map — **not** the chunk's
+name plus `.map`, which is wrong under turbopack — and uploads it under the URL
+a stack frame will actually name. Only maps the server does not already have
+are sent.
 
-`inject-chunk-ids` appends a content-derived id to each chunk and the SDK
+`sourcemap inject` appends a content-derived id to each chunk and the SDK
 stamps it onto frames, so the maps keep matching when the host, the base path,
 or the preview URL changes. It is optional; skip it and matching falls back to
 the URL.
@@ -243,16 +287,12 @@ that renders _many_ projects — a brand front end on each brand's own domain �
 uploads once for the whole bundle instead, keyed by path:
 
 ```bash
-reopt-data upload-sourcemaps --dir .next/static \
-  --path-prefix /_next/static \
-  --host-app studio-web \
-  --organization-id "$REOPT_DATA_ORGANIZATION_ID" \
-  --silent
+reopt-data sourcemap upload --path-prefix /_next/static --host-app studio-web --quiet
 ```
 
 The origin is the part that differs per brand, so it is the part the ref leaves
-out. Each project then points at the host app in its settings. `--silent` prints
-one summary line, which is what a build log wants.
+out. Each project then points at the host app in its settings. `--quiet` keeps
+progress off the build log; the summary and any failure still print.
 
 `next.config.ts` sets `productionBrowserSourceMaps: true` — without it the
 production build emits no browser maps and there is nothing to upload. Note
@@ -261,11 +301,12 @@ that it also serves those maps publicly.
 `postbuild` decides what to do from the environment
 (`scripts/upload-sourcemaps.mjs`):
 
-| Environment                                       | What runs                                   |
-| ------------------------------------------------- | ------------------------------------------- |
-| no credentials                                    | `--dry-run` — a clone still builds          |
-| `REOPT_DATA_API_KEY` or `REOPT_DATA_PLATFORM_KEY` | a real upload                               |
-| …plus `REOPT_DATA_DELETE_MAPS=1`                  | a real upload, then `--delete-after-upload` |
+| Environment                                | What runs                                   |
+| ------------------------------------------ | ------------------------------------------- |
+| no credentials                             | `--dry-run` — a clone still builds          |
+| `REOPT_DATA_ORG_KEY` (or the platform key) | a real upload                               |
+| …plus `REOPT_DATA_DELETE_MAPS=1`           | a real upload, then `--delete-after-upload` |
+| `REOPT_DATA_ASSET_PREFIX`                  | overrides the config's URL prefix           |
 
 **Delete the maps after uploading them, in production.** `next.config.ts`
 serves them publicly, which means the deployment hands anyone the original
@@ -275,12 +316,10 @@ what you want in your own deployment.
 
 `--delete-after-upload` removes each `.map` the run actually stored. A map that
 failed to upload is left alone: it is the only copy, and the next run needs it
-to retry.
+to retry. A partial failure exits 6, so CI notices.
 
 Setting `REOPT_DATA_DELETE_MAPS=1` without credentials prints a warning and
 still does nothing — a dry run stores nothing, so there is nothing to delete.
-Finding that out from a `.map` still sitting in a deployment is the expensive
-way to learn it.
 
 ## Validation
 

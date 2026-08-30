@@ -28,8 +28,8 @@ importers:
         specifier: 6.43.9
         version: 6.43.9
       '@reopt-ai/data-contract':
-        specifier: 0.9.0
-        version: 0.9.0
+        specifier: 0.10.0
+        version: 0.10.0
       '@reopt-ai/data-sdk-client':
         specifier: 0.4.0
         version: 0.4.0(next@16.3.3(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -37,8 +37,8 @@ importers:
         specifier: 0.2.0
         version: 0.2.0(@reopt-ai/data-sdk-client@0.4.0(next@16.3.3(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@reopt-ai/data-sdk-server':
-        specifier: 0.4.0
-        version: 0.4.0(next@16.3.3(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+        specifier: 0.5.0
+        version: 0.5.0(next@16.3.3(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@reopt-ai/opt-datagrid':
         specifier: 1.6.0
         version: 1.6.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -79,6 +79,9 @@ importers:
       '@playwright/test':
         specifier: 1.62.1
         version: 1.62.1
+      '@reopt-ai/data-cli':
+        specifier: 0.1.0
+        version: 0.1.0
       '@tailwindcss/postcss':
         specifier: ^4.3.3
         version: 4.3.3
@@ -694,6 +697,14 @@ packages:
   '@marijn/find-cluster-break@1.0.4':
     resolution: {integrity: sha512-Wy0V7+SGUjnF9/TkiM1hKVDPj7jKXduPNboMVtHTA8dySMURWqfg/JZ9E2Sq8JgSJmkl7k7Qe9FLeMSrSraWmQ==}
 
+  '@modelcontextprotocol/core@2.0.0':
+    resolution: {integrity: sha512-pJCEwGG7Lfr/+PQp9ZTwKXNeO5wzbfKL7H3MYpCorM4oFBoQrdjnBgEoqG+RjhsvS1FKrDbKux+M1HhlnGWqcA==}
+    engines: {node: '>=20'}
+
+  '@modelcontextprotocol/server@2.0.0':
+    resolution: {integrity: sha512-YhHWdHfpFMQfd0prsEnxKeS3Qz3ytIGmsS0sth4KDjnacIT7hxk6hXHkJ9KysxlkvTM+WZAtQbbcUhdoP4Hvtw==}
+    engines: {node: '>=20'}
+
   '@next/env@16.3.3':
     resolution: {integrity: sha512-U2eYQRwXj+dsqxV79zFqExDdatnNY/ZWc2nsJU1p/OgT7fd3dXwlF6OjYaFQCfMoeTA19PWq+wVmYgimVA+V+g==}
 
@@ -899,6 +910,19 @@ packages:
       react-redux:
         optional: true
 
+  '@reopt-ai/data-cli@0.1.0':
+    resolution: {integrity: sha512-p4+IrDWqkOlHOnEAhGe9nEOgXzMbrAA2rXjDqdnMNhFtfRiHlTkCP1tjF3i48TFRjB9UszfWOGBB8YL9XzBPOA==}
+    engines: {node: '>=22'}
+    hasBin: true
+    peerDependencies:
+      '@vercel/blob': ^2.8.0
+    peerDependenciesMeta:
+      '@vercel/blob':
+        optional: true
+
+  '@reopt-ai/data-contract@0.10.0':
+    resolution: {integrity: sha512-rNWsoIGlukDTYqPDyaKxyPBIc9PTrgQVN1GHoIYUBqLQ8LhnrXtxxAuPwRpfXv/PTTxHP+u3MpClZqO6xPRKjA==}
+
   '@reopt-ai/data-contract@0.9.0':
     resolution: {integrity: sha512-r8evXPwUaEu0TLAvwIyuC2VwBeaTVZ7Z453DgqZnZyh0VyTlsphjWW4zZHUgqri0944tHKp0pJgt4sA3zWk7iQ==}
 
@@ -922,9 +946,8 @@ packages:
       react:
         optional: true
 
-  '@reopt-ai/data-sdk-server@0.4.0':
-    resolution: {integrity: sha512-Hw9sL9gKwkTUvyf4bP+56bWiy2fHZSu/M1L7VqVEgnnEqL5M9TW3jFJ4KGFxIRUzPnn84CTS0CW8J2oFFN9PYA==}
-    hasBin: true
+  '@reopt-ai/data-sdk-server@0.5.0':
+    resolution: {integrity: sha512-NYLGMu966ECRaG19+Uytyqeyms8MDrmCVczG4e7qy3SkQ2XPzVSozzQmSo+JUb2pBw8BoLkJPvn57UJLUquySg==}
     peerDependencies:
       '@vercel/functions': '>=1.0.0'
       next: '>=15.0.0'
@@ -2371,6 +2394,15 @@ snapshots:
 
   '@marijn/find-cluster-break@1.0.4': {}
 
+  '@modelcontextprotocol/core@2.0.0':
+    dependencies:
+      zod: 4.4.3
+
+  '@modelcontextprotocol/server@2.0.0':
+    dependencies:
+      '@modelcontextprotocol/core': 2.0.0
+      zod: 4.4.3
+
   '@next/env@16.3.3': {}
 
   '@next/swc-darwin-arm64@16.3.3':
@@ -2476,6 +2508,16 @@ snapshots:
       react: 19.2.8
       react-redux: 9.3.0(@types/react@19.2.18)(react@19.2.8)(redux@5.0.1)
 
+  '@reopt-ai/data-cli@0.1.0':
+    dependencies:
+      '@modelcontextprotocol/server': 2.0.0
+      '@reopt-ai/data-contract': 0.10.0
+      zod: 4.4.3
+
+  '@reopt-ai/data-contract@0.10.0':
+    dependencies:
+      zod: 4.4.3
+
   '@reopt-ai/data-contract@0.9.0':
     dependencies:
       zod: 4.4.3
@@ -2493,9 +2535,9 @@ snapshots:
     optionalDependencies:
       react: 19.2.8
 
-  '@reopt-ai/data-sdk-server@0.4.0(next@16.3.3(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))':
+  '@reopt-ai/data-sdk-server@0.5.0(next@16.3.3(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))':
     dependencies:
-      '@reopt-ai/data-contract': 0.9.0
+      '@reopt-ai/data-contract': 0.10.0
       server-only: 0.0.1
     optionalDependencies:
       next: 16.3.3(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

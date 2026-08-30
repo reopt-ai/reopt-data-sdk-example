@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "projectId": "cmta2v4g60005zfyqq9eya1he",
+  "syncedAt": "2026-08-30T09:23:55.777Z",
+  "events": {
+    "$pageview": {
+      "updatedAt": "2026-08-30T09:22:37.436Z",
+      "hash": "f1cce076bc61265b"
+    },
+    "cart.added": {
+      "updatedAt": "2026-08-30T09:22:37.436Z",
+      "hash": "08ad4769090e60a5"
+    },
+    "checkout.submitted": {
+      "updatedAt": "2026-08-30T09:22:40.057Z",
+      "hash": "143bbaba11f488e1"
+    },
+    "order.completed": {
+      "updatedAt": "2026-08-30T09:22:37.436Z",
+      "hash": "fe902455bd14dfb1"
+    },
+    "search.performed": {
+      "updatedAt": "2026-08-30T09:23:55.440Z",
+      "hash": "7bc95472b20545bb"
+    }
+  }
+}

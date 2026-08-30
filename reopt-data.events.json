@@ -1,0 +1,27 @@
+{
+  "$schema": "https://data.reopt.ai/schemas/event-catalog.v1.json",
+  "version": 1,
+  "projectId": "cmta2v4g60005zfyqq9eya1he",
+  "events": {
+    "$pageview": {},
+    "cart.added": {
+      "displayName": "장바구니 담기",
+      "category": "commerce",
+      "rollupProperties": ["sku"]
+    },
+    "checkout.submitted": {
+      "displayName": "결제 제출",
+      "category": "commerce"
+    },
+    "order.completed": {
+      "displayName": "주문 완료",
+      "conversion": true,
+      "category": "commerce",
+      "rollupProperties": ["currency"]
+    },
+    "search.performed": {
+      "displayName": "검색",
+      "rollupProperties": ["query_length"]
+    }
+  }
+}
