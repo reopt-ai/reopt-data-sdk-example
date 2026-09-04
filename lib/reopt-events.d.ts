@@ -2,16 +2,22 @@
 // Project cmta2v4g60005zfyqq9eya1he. Re-run after changing the catalogue.
 
 /** Every event the catalogue declares. */
-export type ReoptEventName = "$pageview" | "cart.added" | "checkout.submitted" | "order.completed" | "search.performed";
+export type ReoptEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "search.performed";
 
 /** Events that are not archived — the ones new code should emit. */
-export type ReoptActiveEventName = "$pageview" | "cart.added" | "checkout.submitted" | "order.completed" | "search.performed";
+export type ReoptActiveEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "search.performed";
 
 /** Known property keys per event (the rollup properties). Values are untyped until the catalogue carries a property schema. */
 export interface ReoptEventProperties {
-  "$pageview": { [key: string]: unknown };
-  "cart.added": { sku?: unknown; [key: string]: unknown };
-  "checkout.submitted": { [key: string]: unknown };
-  "order.completed": { currency?: unknown; [key: string]: unknown };
+  "$pageview": { path?: unknown; utm_source?: unknown; utm_medium?: unknown; utm_campaign?: unknown; [key: string]: unknown };
+  "cart.added": { category?: unknown; price_band?: unknown; currency?: unknown; [key: string]: unknown };
+  "cart.removed": { category?: unknown; price_band?: unknown; currency?: unknown; [key: string]: unknown };
+  "cart.updated": { category?: unknown; price_band?: unknown; currency?: unknown; [key: string]: unknown };
+  "checkout.started": { currency?: unknown; value_band?: unknown; item_count?: unknown; [key: string]: unknown };
+  "checkout.submitted": { mode?: unknown; currency?: unknown; value_band?: unknown; [key: string]: unknown };
+  "lab.ping": { source?: unknown; [key: string]: unknown };
+  "order.completed": { source?: unknown; currency?: unknown; value_band?: unknown; [key: string]: unknown };
+  "order.reconciled": { source?: unknown; currency?: unknown; value_band?: unknown; [key: string]: unknown };
+  "product.viewed": { category?: unknown; price_band?: unknown; product_slug?: unknown; [key: string]: unknown };
   "search.performed": { query_length?: unknown; [key: string]: unknown };
 }

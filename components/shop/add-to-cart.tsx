@@ -5,6 +5,7 @@ import { Button, toast } from "@reopt-ai/opt-ui";
 import { useTransition } from "react";
 
 import { addToCartAction } from "@/app/actions";
+import { ANALYTICS_CURRENCY, priceBand } from "@/lib/reopt/commerce-analytics";
 import type { ProductCategory } from "@/lib/shop/catalog";
 
 /**
@@ -36,6 +37,11 @@ export function AddToCartButton({ product }: { product: AddToCartProduct }) {
           product_slug: product.slug,
           category: product.category,
           price: product.price,
+          price_band: priceBand(product.price),
+          currency: ANALYTICS_CURRENCY,
+          quantity: 1,
+          cart_value: product.price,
+          funnel_stage: "cart",
         });
         startTransition(async () => {
           await addToCartAction(product.id);

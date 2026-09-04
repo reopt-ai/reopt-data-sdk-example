@@ -7,7 +7,9 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { ManualPageView } from "@/components/reopt/manual-page-view";
+import { ProductViewEvent } from "@/components/reopt/product-view-event";
 import { AddToCartButton } from "@/components/shop/add-to-cart";
+import { ANALYTICS_CURRENCY, priceBand } from "@/lib/reopt/commerce-analytics";
 import { FLAGS_COOKIE, parseFlags } from "@/lib/reopt/flags";
 import { findProduct, formatWon } from "@/lib/shop/catalog";
 
@@ -37,13 +39,24 @@ export async function generateMetadata({
 
 export default async function ProductPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { slug } = await params;
+  const query = await searchParams;
   const product = findProduct(slug);
   if (!product) notFound();
   const flags = parseFlags((await cookies()).get(FLAGS_COOKIE)?.value);
+  const analyticsDemo = Object.fromEntries(
+    ["demo_run_id", "demo_cohort"].flatMap((key) => {
+      const value = query[key];
+      return typeof value === "string" && /^[a-zA-Z0-9_-]{1,80}$/.test(value)
+        ? [[key, value]]
+        : [];
+    }),
+  );
 
   return (
     <article className="flex flex-col gap-12 sm:gap-16">
@@ -51,9 +64,21 @@ export default async function ProductPage({
         enabled={!flags.autoPageview}
         properties={{
           product_id: product.id,
+          product_slug: product.slug,
           category: product.category,
+          price: product.price,
+          price_band: priceBand(product.price),
+          currency: ANALYTICS_CURRENCY,
           page_id: `product:${product.slug}`,
+          ...analyticsDemo,
         }}
+      />
+      <ProductViewEvent
+        productId={product.id}
+        productSlug={product.slug}
+        category={product.category}
+        price={product.price}
+        analyticsContext={analyticsDemo}
       />
 
       <nav

@@ -49,8 +49,9 @@ export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "browser",
     api: "track()",
-    what: "cart.added · cart.updated · cart.removed · checkout.submitted",
-    where: "components/shop/add-to-cart.tsx · components/shop/cart-lines.tsx",
+    what: "Property-rich product.viewed · cart.* · checkout.* funnel events",
+    where:
+      "components/reopt/product-view-event.tsx · components/reopt/checkout-view-event.tsx · components/shop/add-to-cart.tsx · components/shop/cart-lines.tsx",
   },
   {
     area: "browser",

@@ -26,6 +26,7 @@ is real and the assets must not be used to represent reopt or a real merchant.
   the storefront.
 - Playwright assertions against payloads built by the real SDK transport.
 - A development outbox worker that preserves per-event device identity.
+- Analysis-ready commerce properties and a synthetic multi-channel journey seed.
 
 ## Quick start
 
@@ -81,6 +82,43 @@ command does not create or reset Data resources and does not run a cron drainer.
 Use `pnpm sdk:mode` to inspect the active source, `pnpm sdk:tarball` for a
 package-fidelity check, and `pnpm sdk:npm` before handing off or deploying this
 standalone repository.
+
+### Seed analysis-ready journeys
+
+The storefront's live events share a low-cardinality vocabulary for category,
+price band, currency, checkout mode, value band, and funnel stage. That makes a
+real visit immediately useful in property-filtered funnels such as
+`product.viewed → cart.added → checkout.started → order.completed`.
+
+For acquisition and channel comparisons, preview the synthetic dataset first:
+
+```bash
+pnpm analytics:seed
+```
+
+The command is dry-run by default. To apply it, start the configured storefront
+in one terminal and replay the plan in another:
+
+```bash
+pnpm dev
+# another terminal
+pnpm analytics:seed -- --apply
+```
+
+The development storefront must have `REOPT_DATA_WRITE_KEY` configured and
+diagnostics enabled. The command drives the real UI through isolated browser
+contexts, so the browser SDK opens genuine sessions and server-confirmed orders
+join them normally. It does not use a privileged data-insertion shortcut.
+
+One run sends synthetic, non-PII analytics journeys across paid search, email,
+paid social, organic search, referral, and direct traffic. Client-side journey
+events carry the same `demo_run_id` and cohort label for correlation; filter
+the first funnel step by either property to isolate a run or cohort. Each
+journey gets a unique browser identity, starts with an attributable `$pageview`,
+and intentionally drops visitors between commerce stages so funnel and
+conversion-rate differences are visible. Re-running creates a new run; it
+never resets or deletes existing project data. Use `--base-url` to target a
+different development storefront.
 
 ## Architecture
 
@@ -157,30 +195,30 @@ capability changes.
 
 <!-- FEATURE-MAP:START — lib/reopt/feature-map.ts is the source of truth -->
 
-| Area    | API                                                    | Reference                                                                                                               |
-| ------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| Browser | `<ReoptProvider config bootstrap>`                     | `app/layout.tsx` · `components/reopt/analytics-provider.tsx`                                                            |
-| Browser | `<ReoptPageView />` / `pageView()`                     | `components/reopt/analytics-provider.tsx` · `components/reopt/manual-page-view.tsx`                                     |
-| Browser | `<ReoptWebVitals />`                                   | `components/reopt/analytics-provider.tsx` · `components/reopt/web-vitals-table.tsx`                                     |
-| Browser | `normalizePath`                                        | `lib/reopt/normalize-path.ts`                                                                                           |
-| Browser | `init({ properties })` / `register()`                  | `components/reopt/analytics-provider.tsx` · `components/reopt/manual-page-view.tsx`                                     |
-| Browser | `track()`                                              | `components/shop/add-to-cart.tsx` · `components/shop/cart-lines.tsx`                                                    |
-| Browser | `identify()` / `reset()`                               | `components/shop/account-panel.tsx`                                                                                     |
-| Browser | `getDeviceId()`                                        | `components/shop/checkout-form.tsx`                                                                                     |
-| Browser | `capture.exceptions` / `captureException()`            | `components/reopt/instrumentation-lab.tsx`                                                                              |
-| Browser | `captureException(error, { level, fingerprint })`      | `components/reopt/error-lab.tsx`                                                                                        |
-| Browser | `capture.exceptionSteps` / `addExceptionStep()`        | `components/reopt/error-lab.tsx`                                                                                        |
-| Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts`                                                      |
-| Browser | `config.fetch / config.observe`                        | `lib/reopt/devtools.ts` · `components/reopt/diagnostic-analytics-provider.tsx` · `components/reopt/devtools-drawer.tsx` |
-| Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx`                                                                              |
-| Server  | `createReopt({ writeKey, credentials, getProfileId })` | `lib/reopt/server.ts`                                                                                                   |
-| Server  | `getBootstrap()`                                       | `app/layout.tsx`                                                                                                        |
-| Server  | `getReopt().track()`                                   | `app/actions.ts` · `app/api/orders/route.ts`                                                                            |
-| Server  | `createOnRequestError()`                               | `instrumentation.ts` · `app/api/boom/route.ts`                                                                          |
-| Proxy   | `reoptProxy({ writeKey: resolver, proxy: true })`      | `proxy.ts`                                                                                                              |
-| Node    | `createReoptNode()` + `identity.deviceId`              | `scripts/forward.ts` · `lib/shop/outbox.ts`                                                                             |
-| Test    | `window.__reoptDevtools`                               | `e2e/*.spec.ts`                                                                                                         |
-| Test    | `ingest requestId → Query API requestId`               | `e2e/roundtrip.spec.ts` · `lib/reopt/scenarios.ts`                                                                      |
+| Area    | API                                                    | Reference                                                                                                                                                     |
+| ------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Browser | `<ReoptProvider config bootstrap>`                     | `app/layout.tsx` · `components/reopt/analytics-provider.tsx`                                                                                                  |
+| Browser | `<ReoptPageView />` / `pageView()`                     | `components/reopt/analytics-provider.tsx` · `components/reopt/manual-page-view.tsx`                                                                           |
+| Browser | `<ReoptWebVitals />`                                   | `components/reopt/analytics-provider.tsx` · `components/reopt/web-vitals-table.tsx`                                                                           |
+| Browser | `normalizePath`                                        | `lib/reopt/normalize-path.ts`                                                                                                                                 |
+| Browser | `init({ properties })` / `register()`                  | `components/reopt/analytics-provider.tsx` · `components/reopt/manual-page-view.tsx`                                                                           |
+| Browser | `track()`                                              | `components/reopt/product-view-event.tsx` · `components/reopt/checkout-view-event.tsx` · `components/shop/add-to-cart.tsx` · `components/shop/cart-lines.tsx` |
+| Browser | `identify()` / `reset()`                               | `components/shop/account-panel.tsx`                                                                                                                           |
+| Browser | `getDeviceId()`                                        | `components/shop/checkout-form.tsx`                                                                                                                           |
+| Browser | `capture.exceptions` / `captureException()`            | `components/reopt/instrumentation-lab.tsx`                                                                                                                    |
+| Browser | `captureException(error, { level, fingerprint })`      | `components/reopt/error-lab.tsx`                                                                                                                              |
+| Browser | `capture.exceptionSteps` / `addExceptionStep()`        | `components/reopt/error-lab.tsx`                                                                                                                              |
+| Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts`                                                                                            |
+| Browser | `config.fetch / config.observe`                        | `lib/reopt/devtools.ts` · `components/reopt/diagnostic-analytics-provider.tsx` · `components/reopt/devtools-drawer.tsx`                                       |
+| Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx`                                                                                                                    |
+| Server  | `createReopt({ writeKey, credentials, getProfileId })` | `lib/reopt/server.ts`                                                                                                                                         |
+| Server  | `getBootstrap()`                                       | `app/layout.tsx`                                                                                                                                              |
+| Server  | `getReopt().track()`                                   | `app/actions.ts` · `app/api/orders/route.ts`                                                                                                                  |
+| Server  | `createOnRequestError()`                               | `instrumentation.ts` · `app/api/boom/route.ts`                                                                                                                |
+| Proxy   | `reoptProxy({ writeKey: resolver, proxy: true })`      | `proxy.ts`                                                                                                                                                    |
+| Node    | `createReoptNode()` + `identity.deviceId`              | `scripts/forward.ts` · `lib/shop/outbox.ts`                                                                                                                   |
+| Test    | `window.__reoptDevtools`                               | `e2e/*.spec.ts`                                                                                                                                               |
+| Test    | `ingest requestId → Query API requestId`               | `e2e/roundtrip.spec.ts` · `lib/reopt/scenarios.ts`                                                                                                            |
 
 <!-- FEATURE-MAP:END -->
 
@@ -243,10 +281,11 @@ here when the flag is absent, so the scripts below carry no ids.
 
 ## Event catalogue
 
-`reopt-data.events.json` declares the events this app emits — `cart.added`,
-`checkout.submitted`, `order.completed`, plus the SDK's `$pageview` — with their
-display names, the conversion flag and the properties the hourly rollups break
-them down by. The file is the truth: CI pushes it, so the catalogue is bound to
+`reopt-data.events.json` declares the app's navigation, product, cart, checkout,
+order, search, and diagnostic events — including the complete
+`product.viewed → cart.added → checkout.started → order.completed` funnel —
+with their display names, statuses, conversion flag, and low-cardinality rollup
+properties. The file is the truth: CI pushes it, so the catalogue is bound to
 the same commit as the code that emits the events, instead of waiting for
 someone to open the dashboard.
 
