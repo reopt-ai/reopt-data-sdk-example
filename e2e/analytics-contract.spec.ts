@@ -36,6 +36,15 @@ test.describe("analytics contract", () => {
     expect(pageview.payload?.properties?.path).toBe("/products/:slug");
     expect(pageview.payload?.properties?.product_slug).toBe("murmur-buds");
 
+    const productViewed = await waitForEvent(page, "product.viewed");
+    expect(productViewed.payload?.properties).toMatchObject({
+      product_slug: "murmur-buds",
+      category: "audio",
+      price_band: "core",
+      currency: "KRW",
+      funnel_stage: "viewed",
+    });
+
     // `$pageleave` inherits the page view's path, so it agrees too.
     await navigate(page, /Cart/);
     const leave = await waitForEvent(page, "$pageleave");

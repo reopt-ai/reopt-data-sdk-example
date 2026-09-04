@@ -5,6 +5,10 @@ import { redirect } from "next/navigation";
 
 import { currentSession } from "@/lib/auth";
 import { getReopt } from "@/lib/reopt/server";
+import {
+  ANALYTICS_CURRENCY,
+  orderValueBand,
+} from "@/lib/reopt/commerce-analytics";
 import { findProductById } from "@/lib/shop/catalog";
 import { ensureCartId, readCartId } from "@/lib/shop/cart-session";
 import { CartMutationInput, checkoutFromFormData } from "@/lib/shop/input";
@@ -98,6 +102,9 @@ export async function placeOrderAction(formData: FormData): Promise<void> {
       ),
     ].filter(Boolean),
     source: "server-action",
+    currency: ANALYTICS_CURRENCY,
+    value_band: orderValueBand(total),
+    funnel_stage: "converted",
   });
 
   // The same conversion, written down for the "record now, send later" demo.
@@ -105,7 +112,13 @@ export async function placeOrderAction(formData: FormData): Promise<void> {
     name: "order.reconciled",
     deviceId,
     profileId: session?.userId ?? null,
-    properties: { order_id: order.id, total, source: "outbox" },
+    properties: {
+      order_id: order.id,
+      total,
+      source: "outbox",
+      currency: ANALYTICS_CURRENCY,
+      value_band: orderValueBand(total),
+    },
   });
 
   clearCart(cartId);

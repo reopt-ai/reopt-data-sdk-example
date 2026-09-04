@@ -2,6 +2,7 @@ import { Card, CardContent } from "@reopt-ai/opt-ui";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
+import { CheckoutViewEvent } from "@/components/reopt/checkout-view-event";
 import { CheckoutForm } from "@/components/shop/checkout-form";
 import { currentSession } from "@/lib/auth";
 import { formatWon } from "@/lib/shop/catalog";
@@ -18,9 +19,16 @@ export default async function CheckoutPage() {
   if (lines.length === 0) redirect("/cart");
 
   const session = await currentSession();
+  const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
+  const categories = [...new Set(lines.map((line) => line.product.category))];
 
   return (
     <div className="flex flex-col gap-8">
+      <CheckoutViewEvent
+        cartValue={total}
+        itemCount={itemCount}
+        categories={categories}
+      />
       <header className="max-w-2xl">
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           Checkout
@@ -32,7 +40,12 @@ export default async function CheckoutPage() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_23rem]">
-        <CheckoutForm defaultEmail={session?.email ?? ""} />
+        <CheckoutForm
+          defaultEmail={session?.email ?? ""}
+          cartValue={total}
+          itemCount={itemCount}
+          categories={categories}
+        />
 
         <Card className="h-fit">
           <CardContent className="flex flex-col gap-4 py-6 text-sm">

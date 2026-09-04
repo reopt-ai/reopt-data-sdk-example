@@ -16,6 +16,10 @@ import { useState, useTransition } from "react";
 import { useClientSnapshot } from "@/lib/use-client-snapshot";
 
 import { placeOrderAction } from "@/app/actions";
+import {
+  ANALYTICS_CURRENCY,
+  orderValueBand,
+} from "@/lib/reopt/commerce-analytics";
 
 /**
  * Checkout, in the two shapes a real app has to choose between.
@@ -30,7 +34,17 @@ import { placeOrderAction } from "@/app/actions";
  * visitor's browser. Row-level `deviceId` wins over the batch header, so one
  * batch can carry several visitors.
  */
-export function CheckoutForm({ defaultEmail }: { defaultEmail: string }) {
+export function CheckoutForm({
+  defaultEmail,
+  cartValue,
+  itemCount,
+  categories,
+}: {
+  defaultEmail: string;
+  cartValue: number;
+  itemCount: number;
+  categories: string[];
+}) {
   const { getDeviceId } = useReopt();
   const track = useTrack();
   const router = useRouter();
@@ -53,7 +67,15 @@ export function CheckoutForm({ defaultEmail }: { defaultEmail: string }) {
         <form
           className="mt-6 flex flex-col gap-5"
           action={(formData) => {
-            track("checkout.submitted", { mode });
+            track("checkout.submitted", {
+              mode,
+              cart_value: cartValue,
+              item_count: itemCount,
+              categories,
+              currency: ANALYTICS_CURRENCY,
+              value_band: orderValueBand(cartValue),
+              funnel_stage: "submitted",
+            });
             if (mode === "server-action") {
               startTransition(() => placeOrderAction(formData));
               return;

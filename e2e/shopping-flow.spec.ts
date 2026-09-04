@@ -43,6 +43,9 @@ test.describe("shopping journey", () => {
       product_id: "p_kb_65",
       product_slug: "aster-65",
       category: "keyboard",
+      price_band: "core",
+      currency: "KRW",
+      funnel_stage: "cart",
     });
 
     // Sign in: the browser announces the profile, the server confirms it.
@@ -66,6 +69,13 @@ test.describe("shopping journey", () => {
     // Order, confirmed by the server.
     await page.goto("/checkout");
     await waitForHydration(page);
+    const checkoutStarted = await waitForEvent(page, "checkout.started");
+    expect(checkoutStarted.payload?.properties).toMatchObject({
+      currency: "KRW",
+      item_count: 1,
+      value_band: "100k_to_249k",
+      funnel_stage: "checkout",
+    });
     const shownDeviceId = await page
       .getByTestId("checkout-device-id")
       .textContent();
@@ -76,6 +86,15 @@ test.describe("shopping journey", () => {
 
     await page.getByTestId("place-order").click();
     await expect(page.getByTestId("order-summary")).toBeVisible();
+
+    const submitted = await waitForEvent(page, "checkout.submitted");
+    expect(submitted.payload?.properties).toMatchObject({
+      mode: "server-action",
+      currency: "KRW",
+      item_count: 1,
+      value_band: "100k_to_249k",
+      funnel_stage: "submitted",
+    });
 
     // The device the order was filed under is the one the page was tracked with.
     await expect(page.getByTestId("order-summary")).toContainText(

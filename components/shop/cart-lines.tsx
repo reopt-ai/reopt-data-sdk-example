@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useTransition } from "react";
 
 import { setQuantityAction } from "@/app/actions";
+import { ANALYTICS_CURRENCY, priceBand } from "@/lib/reopt/commerce-analytics";
 import { formatWon } from "@/lib/shop/catalog";
 
 export interface CartLineView {
@@ -30,8 +31,12 @@ export function CartLines({ lines }: { lines: CartLineView[] }) {
       product_id: line.productId,
       product_slug: line.slug,
       category: line.category,
+      price_band: priceBand(line.price),
+      currency: ANALYTICS_CURRENCY,
       quantity,
       previous_quantity: line.quantity,
+      line_value: line.price * quantity,
+      funnel_stage: quantity === 0 ? "removed" : "cart",
     });
     startTransition(() => setQuantityAction(line.productId, quantity));
   };

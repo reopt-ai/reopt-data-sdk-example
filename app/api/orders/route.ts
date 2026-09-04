@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 
 import { currentSession } from "@/lib/auth";
 import { getReopt } from "@/lib/reopt/server";
+import {
+  ANALYTICS_CURRENCY,
+  orderValueBand,
+} from "@/lib/reopt/commerce-analytics";
 import { readCartId } from "@/lib/shop/cart-session";
 import { findProductById } from "@/lib/shop/catalog";
 import { CheckoutInput } from "@/lib/shop/input";
@@ -74,6 +78,9 @@ export async function POST(request: Request) {
         ),
       ].filter(Boolean),
       source: "route-handler",
+      currency: ANALYTICS_CURRENCY,
+      value_band: orderValueBand(total),
+      funnel_stage: "converted",
     },
     ...(deviceId ? { identity: { deviceId } } : {}),
   });
@@ -82,7 +89,13 @@ export async function POST(request: Request) {
     name: "order.reconciled",
     deviceId,
     profileId: session?.userId ?? null,
-    properties: { order_id: order.id, total, source: "outbox" },
+    properties: {
+      order_id: order.id,
+      total,
+      source: "outbox",
+      currency: ANALYTICS_CURRENCY,
+      value_band: orderValueBand(total),
+    },
   });
 
   clearCart(cartId);

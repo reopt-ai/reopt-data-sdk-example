@@ -3,25 +3,62 @@
   "version": 1,
   "projectId": "cmta2v4g60005zfyqq9eya1he",
   "events": {
-    "$pageview": {},
-    "cart.added": {
-      "displayName": "장바구니 담기",
+    "$pageview": {
+      "displayName": "Page viewed",
+      "category": "navigation",
+      "rollupProperties": ["path", "utm_source", "utm_medium", "utm_campaign"]
+    },
+    "product.viewed": {
+      "displayName": "Product viewed",
       "category": "commerce",
-      "rollupProperties": ["sku"]
+      "rollupProperties": ["category", "price_band", "product_slug"]
+    },
+    "cart.added": {
+      "displayName": "Cart item added",
+      "category": "commerce",
+      "rollupProperties": ["category", "price_band", "currency"]
+    },
+    "cart.updated": {
+      "displayName": "Cart item updated",
+      "category": "commerce",
+      "rollupProperties": ["category", "price_band", "currency"]
+    },
+    "cart.removed": {
+      "displayName": "Cart item removed",
+      "category": "commerce",
+      "rollupProperties": ["category", "price_band", "currency"]
     },
     "checkout.submitted": {
-      "displayName": "결제 제출",
-      "category": "commerce"
+      "displayName": "Checkout submitted",
+      "category": "commerce",
+      "rollupProperties": ["mode", "currency", "value_band"]
+    },
+    "checkout.started": {
+      "displayName": "Checkout started",
+      "category": "commerce",
+      "rollupProperties": ["currency", "value_band", "item_count"]
     },
     "order.completed": {
-      "displayName": "주문 완료",
+      "displayName": "Order completed",
       "conversion": true,
       "category": "commerce",
-      "rollupProperties": ["currency"]
+      "rollupProperties": ["source", "currency", "value_band"]
+    },
+    "order.reconciled": {
+      "displayName": "Order reconciled",
+      "status": "internal",
+      "category": "commerce",
+      "rollupProperties": ["source", "currency", "value_band"]
     },
     "search.performed": {
-      "displayName": "검색",
+      "displayName": "Search performed",
       "rollupProperties": ["query_length"]
+    },
+    "lab.ping": {
+      "displayName": "Diagnostics ping",
+      "status": "internal",
+      "category": "diagnostics",
+      "rollupProperties": ["source"]
     }
   }
 }
