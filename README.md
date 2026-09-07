@@ -282,7 +282,7 @@ here when the flag is absent, so the scripts below carry no ids.
 ## Event catalogue
 
 `reopt-data.events.json` declares the app's navigation, product, cart, checkout,
-order, search, and diagnostic events — including the complete
+order, and diagnostic events — including the complete
 `product.viewed → cart.added → checkout.started → order.completed` funnel —
 with their display names, statuses, conversion flag, and low-cardinality rollup
 properties. The file is the truth: CI pushes it, so the catalogue is bound to

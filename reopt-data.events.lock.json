@@ -1,27 +1,51 @@
 {
   "version": 1,
   "projectId": "cmta2v4g60005zfyqq9eya1he",
-  "syncedAt": "2026-08-30T09:23:55.777Z",
+  "syncedAt": "2026-09-06T18:08:12.663Z",
   "events": {
     "$pageview": {
-      "updatedAt": "2026-08-30T09:22:37.436Z",
-      "hash": "f1cce076bc61265b"
+      "updatedAt": "2026-09-06T18:08:12.088Z",
+      "hash": "fd0f4679a0f95de5"
     },
     "cart.added": {
-      "updatedAt": "2026-08-30T09:22:37.436Z",
-      "hash": "08ad4769090e60a5"
+      "updatedAt": "2026-09-06T18:08:12.105Z",
+      "hash": "6bc3fbcdd10ba365"
+    },
+    "cart.removed": {
+      "updatedAt": "2026-09-06T18:08:12.048Z",
+      "hash": "e7f15ec83e84e148"
+    },
+    "cart.updated": {
+      "updatedAt": "2026-09-06T18:08:12.048Z",
+      "hash": "382c538e4d94fa4a"
+    },
+    "checkout.started": {
+      "updatedAt": "2026-09-06T18:08:12.048Z",
+      "hash": "6f4294940bb958d3"
     },
     "checkout.submitted": {
-      "updatedAt": "2026-08-30T09:22:40.057Z",
-      "hash": "143bbaba11f488e1"
+      "updatedAt": "2026-09-06T18:08:12.107Z",
+      "hash": "e9426ae01a2bf325"
+    },
+    "lab.ping": {
+      "updatedAt": "2026-09-06T18:08:12.048Z",
+      "hash": "2af79459dd28be20"
     },
     "order.completed": {
-      "updatedAt": "2026-08-30T09:22:37.436Z",
-      "hash": "fe902455bd14dfb1"
+      "updatedAt": "2026-09-06T18:08:12.107Z",
+      "hash": "0f974bb9def13940"
+    },
+    "order.reconciled": {
+      "updatedAt": "2026-09-06T18:08:12.048Z",
+      "hash": "aaa2290bf527023f"
+    },
+    "product.viewed": {
+      "updatedAt": "2026-09-06T18:08:12.048Z",
+      "hash": "07911ed94031c42f"
     },
     "search.performed": {
-      "updatedAt": "2026-08-30T09:23:55.440Z",
-      "hash": "7bc95472b20545bb"
+      "updatedAt": "2026-09-06T18:08:12.156Z",
+      "hash": "1148db6e6810361b"
     }
   }
 }

@@ -50,10 +50,6 @@
       "category": "commerce",
       "rollupProperties": ["source", "currency", "value_band"]
     },
-    "search.performed": {
-      "displayName": "Search performed",
-      "rollupProperties": ["query_length"]
-    },
     "lab.ping": {
       "displayName": "Diagnostics ping",
       "status": "internal",
