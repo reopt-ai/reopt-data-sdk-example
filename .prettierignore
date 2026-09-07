@@ -6,5 +6,4 @@ out
 .reopt-local.json
 .sdk-local
 pnpm-lock.yaml
-public/*.svg
 lib/reopt-events.d.ts

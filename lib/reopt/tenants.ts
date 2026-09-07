@@ -37,10 +37,3 @@ export function tenantForHost(
     writeKey,
   };
 }
-
-/** The public write key for `host`; `null` preserves fail-open analytics. */
-export function writeKeyForHost(
-  host: string | null | undefined,
-): string | null {
-  return tenantForHost(host)?.writeKey ?? null;
-}
