@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 
 import {
   deviceCookie,
+  events,
+  waitForHydration,
   hasTenant,
   NO_TENANT_REASON,
   setFlags,
@@ -39,10 +41,13 @@ test.describe("consent", () => {
     ).toContain("false");
 
     await page.goto("/products");
-    const after = await page.evaluate(
-      () => window.__reoptDevtools?.state().totals.events ?? 0,
-    );
-    expect(after, "no events should be delivered after denial").toBe(0);
+    await waitForHydration(page);
+    // Lifecycle diagnostics include dropped attempts; delivery is measured
+    // by the transport batches, which must remain empty after denial.
+    expect(
+      await events(page),
+      "no events should be delivered after denial",
+    ).toHaveLength(0);
   });
 
   test("the proxy does not reseed a device for a visitor who denied consent", async ({

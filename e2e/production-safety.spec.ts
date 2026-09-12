@@ -17,6 +17,9 @@ test.describe("production diagnostics safety", () => {
     const lab = await page.goto("/lab");
     expect(lab?.status()).toBe(404);
 
+    const replay = await page.goto("/debug/replay");
+    expect(replay?.status()).toBe(404);
+
     const boom = await request.get("/api/boom");
     expect(boom.status()).toBe(404);
   });

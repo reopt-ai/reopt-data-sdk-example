@@ -197,6 +197,8 @@ capability changes.
 
 | Area    | API                                                    | Reference                                                                                                                                                     |
 | ------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Browser | `sessionReplay.publicAssets`                           | `components/reopt/replay-analytics-provider.tsx` · `scripts/build-replay-assets.mjs`                                                                          |
+| Browser | `sessionReplay / setConsent("replay") / flushReplay()` | `components/reopt/replay-lab.tsx` · `components/reopt/analytics-provider.tsx`                                                                                 |
 | Browser | `<ReoptProvider config bootstrap>`                     | `app/layout.tsx` · `components/reopt/analytics-provider.tsx`                                                                                                  |
 | Browser | `<ReoptPageView />` / `pageView()`                     | `components/reopt/analytics-provider.tsx` · `components/reopt/manual-page-view.tsx`                                                                           |
 | Browser | `<ReoptWebVitals />`                                   | `components/reopt/analytics-provider.tsx` · `components/reopt/web-vitals-table.tsx`                                                                           |
@@ -420,3 +422,25 @@ Read [CONTRIBUTING.md](./CONTRIBUTING.md) before proposing a change,
 ## License
 
 This example is available under the [MIT License](./LICENSE).
+
+## Session replay development
+
+`/debug/replay` is available only when diagnostics are enabled. It uses the local replay-capable SDK until the next npm release; npm mode keeps the lab visible with an unsupported-version message. Enable the project's replay setting in the Data console, enable the replay SDK flag in the lab, then explicitly agree to record. A run ID correlates the ordinary `replay.lab.started` event with the session. Use the layout and input controls, capture a synthetic error, flush, and open **Session replay** in that project. Layout changes emit `replay.lab.layout_changed`; synthetic errors use `captureException()`. Select either in the replay timeline to jump to that moment, or filter the timeline to errors. Timeline events are scoped to the recording time range and analytics session; simultaneous tabs can contribute events. Withdraw consent to discard pending DOM data.
+
+The default policy masks input values and all visible text, including CSS-generated content, blocks `data-reopt-replay-block` subtrees, removes URL query strings, and excludes unapproved image/font resources, canvas, console and network bodies. The layout control also updates a CSS rule so incremental masking can be inspected. Use synthetic values in this lab. Recordings require an existing materialized analytics session and a server upload grant; a successful analytics flush alone does not prove replay acceptance.
+
+`pnpm dev:stack` respects explicitly supplied environment variables before ignored local fixture values, so an isolated Data test stack can be exercised without rewriting saved project credentials. Hand off in `pnpm sdk:npm` mode.
+
+The replay lab explicitly configures one public product image and JetBrains Mono
+font through `sessionReplay.publicAssets`. `lib/reopt/replay-public-assets.json`
+is generated from reviewed repository files with `node scripts/build-replay-assets.mjs`
+and loaded only by the diagnostic provider. Image pixels/font metadata are not
+masked: never add visitor uploads, avatars or personalized assets. Files are
+embedded in private recordings; replay makes no requests to the original site.
+The font license is in `public/fonts/replay/OFL.txt`.
+
+In the Data console, search recordings by creation time, session ID, duration,
+page path and errors. Path/error conditions use events within the recording's
+analytics session and time range, including simultaneous tabs. Sparse searches
+may need **Continue search** to inspect older recordings. The roundtrip checks
+that the embedded image decodes and the embedded font loads inside the player.

@@ -12,6 +12,12 @@
  */
 
 export const FLAGS = {
+  sessionReplay: {
+    label: "Session replay",
+    detail:
+      "Loads the optional recorder after explicit replay consent and project sampling. Requires the replay-capable SDK.",
+    default: false,
+  },
   autoPageview: {
     label: "Automatic page views",
     detail:

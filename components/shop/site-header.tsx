@@ -24,6 +24,7 @@ export async function SiteHeader({
         ...NAV,
         { href: "/lab", label: "Lab" },
         { href: "/debug/errors", label: "Errors" },
+        { href: "/debug/replay", label: "Replay" },
       ]
     : NAV;
 

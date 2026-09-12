@@ -55,8 +55,19 @@ export function AnalyticsProviderWithTransport({
   config,
   bootstrap,
   transport,
+  replayAssets,
   children,
-}: AnalyticsProviderProps & { transport?: AnalyticsTransport }) {
+}: AnalyticsProviderProps & {
+  transport?: AnalyticsTransport;
+  replayAssets?: readonly { url: string; dataUrl: string }[];
+}) {
+  // Keep the optional workspace capability compatible with older npm SDK types.
+  const replayOptions = {
+    sessionReplay: {
+      enabled: config.flags.sessionReplay,
+      ...(replayAssets ? { publicAssets: replayAssets } : {}),
+    },
+  };
   const clientConfig: ReoptClientConfig = {
     // A missing write key is a supported state, not a crash: the SDK warns once
     // and every call becomes a no-op. The shop must not care.
@@ -65,6 +76,7 @@ export function AnalyticsProviderWithTransport({
     normalizePath,
     ...transport,
     debug: config.flags.debug,
+    ...replayOptions,
     capture: {
       // `<ReoptPageView />` owns page views when it is mounted. With the toggle
       // off, nothing sends one automatically and the pages do it themselves.

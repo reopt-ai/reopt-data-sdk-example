@@ -15,6 +15,20 @@ export interface FeatureRow {
 export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "browser",
+    api: "sessionReplay.publicAssets",
+    what: "Explicit public images and fonts embedded in private recordings without replay-time network requests",
+    where:
+      "components/reopt/replay-analytics-provider.tsx · scripts/build-replay-assets.mjs",
+  },
+  {
+    area: "browser",
+    api: 'sessionReplay / setConsent("replay") / flushReplay()',
+    what: "Opt-in recording, privacy, explicit public image/font assets, event/error search checkpoints and revocation (local SDK until next release)",
+    where:
+      "components/reopt/replay-lab.tsx · components/reopt/analytics-provider.tsx",
+  },
+  {
+    area: "browser",
     api: "<ReoptProvider config bootstrap>",
     what: "The server resolves the write key, flags, and bootstrap before crossing the client boundary",
     where: "app/layout.tsx · components/reopt/analytics-provider.tsx",

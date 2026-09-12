@@ -37,8 +37,8 @@ function localEnvironment() {
 }
 
 const stackEnv = {
-  ...process.env,
   ...localEnvironment(),
+  ...process.env,
   REOPT_DATA_LOCAL_LINKS: "true",
   REOPT_DATA_EXAMPLE_DIAGNOSTICS:
     process.env.REOPT_DATA_EXAMPLE_DIAGNOSTICS ?? "true",
