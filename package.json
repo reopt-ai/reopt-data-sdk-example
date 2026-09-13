@@ -11,7 +11,7 @@
     "nextjs",
     "example"
   ],
-  "homepage": "https://github.com/reopt-ai/reopt-data-sdk-example#readme",
+  "homepage": "https://data-sdk-example.reopt.ai",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/reopt-ai/reopt-data-sdk-example.git"

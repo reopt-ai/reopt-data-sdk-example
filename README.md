@@ -8,6 +8,8 @@ Use it alongside the [reopt Data documentation](https://data.reopt.ai/docs) to
 see browser, server, proxy, consent, identity, and delayed-event patterns in a
 complete application.
 
+Production example: [data-sdk-example.reopt.ai](https://data-sdk-example.reopt.ai).
+
 ![Arc Supply storefront](./docs/screenshots/storefront-home.png)
 
 **Arc Supply** is a fictional workspace-goods store created for this example.
@@ -63,6 +65,12 @@ pnpm dev
 Do not add `NEXT_PUBLIC_` to server credentials. Production startup rejects an
 unsafe auth URL, an unsafe reopt Data URL, or an incomplete server credential
 pair. HTTP service URLs are accepted only for localhost development.
+
+For the production deployment, set
+`BETTER_AUTH_URL=https://data-sdk-example.reopt.ai` and
+`REOPT_DATA_ASSET_PREFIX=https://data-sdk-example.reopt.ai/_next/static` so
+authentication, page metadata, and uploaded source maps use the public origin.
+Environment changes take effect after redeploying the application.
 
 ### Develop against the sibling SDK
 
