@@ -2,10 +2,10 @@
 // Project cmta2v4g60005zfyqq9eya1he. Re-run after changing the catalogue.
 
 /** Every event the catalogue declares. */
-export type ReoptEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed";
+export type ReoptEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "replay.lab.layout_changed" | "replay.lab.started";
 
 /** Events that are not archived — the ones new code should emit. */
-export type ReoptActiveEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed";
+export type ReoptActiveEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "replay.lab.layout_changed" | "replay.lab.started";
 
 /** Known property keys per event (the rollup properties). Values are untyped until the catalogue carries a property schema. */
 export interface ReoptEventProperties {
@@ -19,4 +19,6 @@ export interface ReoptEventProperties {
   "order.completed": { source?: unknown; currency?: unknown; value_band?: unknown; [key: string]: unknown };
   "order.reconciled": { source?: unknown; currency?: unknown; value_band?: unknown; [key: string]: unknown };
   "product.viewed": { category?: unknown; price_band?: unknown; product_slug?: unknown; [key: string]: unknown };
+  "replay.lab.layout_changed": { [key: string]: unknown };
+  "replay.lab.started": { [key: string]: unknown };
 }

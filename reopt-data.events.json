@@ -55,6 +55,16 @@
       "status": "internal",
       "category": "diagnostics",
       "rollupProperties": ["source"]
+    },
+    "replay.lab.started": {
+      "displayName": "Replay lab started",
+      "status": "internal",
+      "category": "diagnostics"
+    },
+    "replay.lab.layout_changed": {
+      "displayName": "Replay lab layout changed",
+      "status": "internal",
+      "category": "diagnostics"
     }
   }
 }
