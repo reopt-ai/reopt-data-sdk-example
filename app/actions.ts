@@ -13,6 +13,7 @@ import { findProductById } from "@/lib/shop/catalog";
 import { ensureCartId, readCartId } from "@/lib/shop/cart-session";
 import { CartMutationInput, checkoutFromFormData } from "@/lib/shop/input";
 import { appendOutbox } from "@/lib/shop/outbox";
+import type { ShopEventName } from "@/lib/reopt/events";
 import {
   addLine,
   clearCart,
@@ -92,7 +93,7 @@ export async function placeOrderAction(formData: FormData): Promise<void> {
     source: "server-action",
   });
 
-  reopt.track("order.completed", {
+  reopt.track("order.completed" satisfies ShopEventName, {
     order_id: order.id,
     total,
     item_count: order.lines.reduce((sum, line) => sum + line.quantity, 0),

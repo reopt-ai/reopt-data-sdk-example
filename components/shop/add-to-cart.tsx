@@ -7,6 +7,7 @@ import { useTransition } from "react";
 import { addToCartAction } from "@/app/actions";
 import { ANALYTICS_CURRENCY, priceBand } from "@/lib/reopt/commerce-analytics";
 import type { ProductCategory } from "@/lib/shop/catalog";
+import type { ShopEventName } from "@/lib/reopt/events";
 
 /**
  * `cart.added` is sent from the browser, next to the click that caused it.
@@ -32,7 +33,7 @@ export function AddToCartButton({ product }: { product: AddToCartProduct }) {
       loading={pending}
       data-testid="add-to-cart"
       onClick={() => {
-        track("cart.added", {
+        track("cart.added" satisfies ShopEventName, {
           product_id: product.id,
           product_slug: product.slug,
           category: product.category,

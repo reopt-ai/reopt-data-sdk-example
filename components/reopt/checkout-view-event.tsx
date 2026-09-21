@@ -3,6 +3,7 @@
 import { useTrack } from "@reopt-ai/data-sdk-client/next";
 import { useEffect, useRef } from "react";
 
+import type { ShopEventName } from "@/lib/reopt/events";
 import {
   ANALYTICS_CURRENCY,
   orderValueBand,
@@ -24,7 +25,7 @@ export function CheckoutViewEvent({
   useEffect(() => {
     if (sent.current) return;
     sent.current = true;
-    track("checkout.started", {
+    track("checkout.started" satisfies ShopEventName, {
       cart_value: cartValue,
       item_count: itemCount,
       categories,

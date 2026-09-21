@@ -9,6 +9,7 @@ import { useTransition } from "react";
 import { setQuantityAction } from "@/app/actions";
 import { ANALYTICS_CURRENCY, priceBand } from "@/lib/reopt/commerce-analytics";
 import { formatWon } from "@/lib/shop/catalog";
+import type { ShopEventName } from "@/lib/reopt/events";
 
 export interface CartLineView {
   productId: string;
@@ -27,17 +28,22 @@ export function CartLines({ lines }: { lines: CartLineView[] }) {
   const [pending, startTransition] = useTransition();
 
   const change = (line: CartLineView, quantity: number) => {
-    track(quantity === 0 ? "cart.removed" : "cart.updated", {
-      product_id: line.productId,
-      product_slug: line.slug,
-      category: line.category,
-      price_band: priceBand(line.price),
-      currency: ANALYTICS_CURRENCY,
-      quantity,
-      previous_quantity: line.quantity,
-      line_value: line.price * quantity,
-      funnel_stage: quantity === 0 ? "removed" : "cart",
-    });
+    track(
+      (quantity === 0
+        ? "cart.removed"
+        : "cart.updated") satisfies ShopEventName,
+      {
+        product_id: line.productId,
+        product_slug: line.slug,
+        category: line.category,
+        price_band: priceBand(line.price),
+        currency: ANALYTICS_CURRENCY,
+        quantity,
+        previous_quantity: line.quantity,
+        line_value: line.price * quantity,
+        funnel_stage: quantity === 0 ? "removed" : "cart",
+      },
+    );
     startTransition(() => setQuantityAction(line.productId, quantity));
   };
 

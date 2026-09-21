@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 
 import { ANALYTICS_CURRENCY, priceBand } from "@/lib/reopt/commerce-analytics";
 import type { ProductCategory } from "@/lib/shop/catalog";
+import type { ShopEventName } from "@/lib/reopt/events";
 
 export interface ProductViewEventProps {
   productId: string;
@@ -28,7 +29,7 @@ export function ProductViewEvent({
   useEffect(() => {
     if (sentProductId.current === productId) return;
     sentProductId.current = productId;
-    track("product.viewed", {
+    track("product.viewed" satisfies ShopEventName, {
       product_id: productId,
       product_slug: productSlug,
       category,

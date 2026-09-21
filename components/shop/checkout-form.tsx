@@ -16,6 +16,7 @@ import { useState, useTransition } from "react";
 import { useClientSnapshot } from "@/lib/use-client-snapshot";
 
 import { placeOrderAction } from "@/app/actions";
+import type { ShopEventName } from "@/lib/reopt/events";
 import {
   ANALYTICS_CURRENCY,
   orderValueBand,
@@ -67,7 +68,7 @@ export function CheckoutForm({
         <form
           className="mt-6 flex flex-col gap-5"
           action={(formData) => {
-            track("checkout.submitted", {
+            track("checkout.submitted" satisfies ShopEventName, {
               mode,
               cart_value: cartValue,
               item_count: itemCount,

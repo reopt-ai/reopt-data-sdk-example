@@ -11,6 +11,7 @@ import { findProductById } from "@/lib/shop/catalog";
 import { CheckoutInput } from "@/lib/shop/input";
 import { appendOutbox } from "@/lib/shop/outbox";
 import { clearCart, createOrder, resolveCart } from "@/lib/shop/store";
+import type { ShopEventName } from "@/lib/reopt/events";
 
 /**
  * Checkout through a route handler, with the device id passed in explicitly.
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
   });
 
   reopt.track({
-    name: "order.completed",
+    name: "order.completed" satisfies ShopEventName,
     properties: {
       order_id: order.id,
       total,

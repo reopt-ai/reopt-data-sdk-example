@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useReopt } from "@reopt-ai/data-sdk-client/next";
 import { Button, Card, CardContent, Input } from "@reopt-ai/opt-ui";
 import { FLAGS_COOKIE, serializeFlags, type Flags } from "@/lib/reopt/flags";
+import type { ShopEventName } from "@/lib/reopt/events";
 
 const subscribeHydration = () => () => {};
 
@@ -65,7 +66,7 @@ export function ReplayLab({ flags }: { flags: Flags }) {
               setRunId(id);
               client.setConsent("analytics", true);
               client.track({
-                name: "replay.lab.started",
+                name: "replay.lab.started" satisfies ShopEventName,
                 properties: { replay_run_id: id },
               });
               await client.flush();
@@ -153,7 +154,7 @@ export function ReplayLab({ flags }: { flags: Flags }) {
               setCount(count + 1);
               if (consented)
                 client?.track({
-                  name: "replay.lab.layout_changed",
+                  name: "replay.lab.layout_changed" satisfies ShopEventName,
                   properties: { replay_run_id: runId, layout_step: count + 1 },
                 });
               const rule = generatedStyle.current?.sheet?.cssRules[0];
