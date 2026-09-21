@@ -29,8 +29,11 @@ nextEnv.loadEnvConfig(process.cwd());
 process.env.REOPT_DATA_WRITE_KEY ||= PLACEHOLDER_WRITE_KEY;
 export default defineConfig({
   testDir: "./e2e",
+  // Anchored. Unanchored, `roundtrip\.spec\.ts` also matched
+  // `replay.roundtrip.spec.ts` — the strongest spec in the repo, excluded from
+  // every default run by a substring nobody intended to write.
   testIgnore:
-    /(roundtrip|deployed|production-safety|production-diagnostics|devtool-visual)\.spec\.ts/,
+    /(^|\/)(roundtrip|deployed|production-safety|production-diagnostics|devtool-visual)\.spec\.ts$/,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
