@@ -1,21 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-import {
-  deviceCookie,
-  events,
-  waitForHydration,
-  hasTenant,
-  NO_TENANT_REASON,
-  setFlags,
-} from "./fixtures";
+import { deviceCookie, events, waitForHydration, setFlags } from "./fixtures";
 
 /**
  * Refusing consent has to mean "forget me", not just "stop sending" — so the
  * spec checks the server too, not only that no batch went out.
  */
 test.describe("consent", () => {
-  test.skip(!hasTenant(), NO_TENANT_REASON);
-
   test("denial is persisted, stops delivery, and forgets the device", async ({
     page,
   }) => {

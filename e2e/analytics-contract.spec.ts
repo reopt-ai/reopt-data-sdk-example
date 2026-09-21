@@ -1,13 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import {
-  batches,
-  hasTenant,
-  navigate,
-  NO_TENANT_REASON,
-  setFlags,
-  waitForEvent,
-} from "./fixtures";
+import { batches, navigate, setFlags, waitForEvent } from "./fixtures";
 
 /**
  * The parts of the integration that are easy to get wrong and impossible to
@@ -15,8 +8,6 @@ import {
  * ride along on the automatic events, and who owns the page view.
  */
 test.describe("analytics contract", () => {
-  test.skip(!hasTenant(), NO_TENANT_REASON);
-
   test("normalizePath is applied consistently to every path event", async ({
     page,
   }) => {

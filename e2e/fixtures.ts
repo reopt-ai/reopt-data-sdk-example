@@ -66,6 +66,23 @@ export function roundtripTenant(): RoundtripTenant | null {
 export const NO_TENANT_REASON =
   "No reopt project is configured. Set REOPT_DATA_WRITE_KEY to run analytics contract tests.";
 
+/**
+ * Whether a project is behind the key — not merely whether a key exists.
+ *
+ * A write key turns the SDK on, which is all most specs need: they read the
+ * batch the SDK built, and building happens before anyone authenticates it.
+ * A spec that asserts the *server accepted* something needs more — ingest has
+ * to answer 200, and the server SDK has to be able to verify a device — and
+ * that takes the client credentials as well. Gating those on the key alone
+ * made them look configurable when they were not.
+ */
+export function hasLiveTenant(): boolean {
+  return roundtripTenant() !== null;
+}
+
+export const NO_LIVE_TENANT_REASON =
+  "No reopt project is reachable. Set REOPT_DATA_PROJECT_ID, REOPT_DATA_CLIENT_ID and REOPT_DATA_CLIENT_SECRET to run the specs that need ingest to accept a batch.";
+
 /** Sets the SDK option cookie before the first load, so the client is created with it. */
 export async function setFlags(page: Page, flags: string): Promise<void> {
   await page.context().addCookies([

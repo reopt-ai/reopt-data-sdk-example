@@ -4,8 +4,8 @@ import {
   addToCart,
   deviceCookie,
   events,
-  hasTenant,
-  NO_TENANT_REASON,
+  hasLiveTenant,
+  NO_LIVE_TENANT_REASON,
   setFlags,
   waitForEvent,
   waitForHydration,
@@ -17,7 +17,7 @@ import {
  * that every event names the same device.
  */
 test.describe("shopping journey", () => {
-  test.skip(!hasTenant(), NO_TENANT_REASON);
+  test.skip(!hasLiveTenant(), NO_LIVE_TENANT_REASON);
 
   test("one seeded device connects the first page view through the order", async ({
     page,
