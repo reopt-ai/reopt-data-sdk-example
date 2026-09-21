@@ -33,12 +33,16 @@ test.describe("deployed application", () => {
   test("/ingest is rewritten through the first-party origin", async ({
     request,
   }) => {
-    // No credentials: a 4xx from ingest proves the request reached it, which is
-    // what this checks. A 404 would mean the rewrite never happened.
+    // No credentials, so ingest refuses — and that refusal is the proof the
+    // request reached it. 404 means the rewrite never happened; 5xx means the
+    // request went somewhere that broke, which is not the same as arriving.
+    // Asserting only "not 404" accepted both of those as success.
     const response = await request.post("/ingest/api/track", { data: [] });
     expect(
       response.status(),
-      "a 404 means the proxy matcher omitted /ingest",
-    ).not.toBe(404);
+      "ingest should refuse an unauthenticated batch, not 404 (no rewrite) or 5xx (never arrived)",
+    ).toBeGreaterThanOrEqual(400);
+    expect(response.status()).toBeLessThan(500);
+    expect(response.status()).not.toBe(404);
   });
 });

@@ -6,7 +6,14 @@ import { defineConfig, devices } from "@playwright/test";
  * really seeds the device cookie — the two things that only break in
  * production, behind a CDN.
  */
+// No fallback. A config whose whole subject is "the deployed instance" must
+// not quietly retarget localhost when the URL is missing: the run goes green
+// and reports that a deployment it never contacted rewrites /ingest correctly.
 const baseURL = process.env.SHOP_DEPLOYED_URL;
+if (!baseURL)
+  throw new Error(
+    "SHOP_DEPLOYED_URL is unset. This suite checks a deployed instance; there is nothing to check without one.",
+  );
 
 export default defineConfig({
   testDir: "./e2e",
@@ -16,7 +23,7 @@ export default defineConfig({
   reporter: "list",
   timeout: 60_000,
   use: {
-    baseURL: baseURL ?? "http://localhost:4100",
+    baseURL,
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
