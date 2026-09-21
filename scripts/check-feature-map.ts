@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { readFileSync } from "node:fs";
+import { existsSync, globSync, readFileSync } from "node:fs";
 
 import { FEATURE_MAP } from "../lib/reopt/feature-map";
 
@@ -48,4 +48,33 @@ if (rows.length !== FEATURE_MAP.length || missing.length > 0) {
   );
 }
 
-console.log(`README feature map matches ${FEATURE_MAP.length} source rows.`);
+/**
+ * The files a row points at have to be there.
+ *
+ * Comparing the README against the array only proves the two strings agree —
+ * delete the implementation and keep the row and this gate still passed, which
+ * is the drift it exists to catch. It cannot prove the API is called, but it
+ * can refuse to let a row name a file that is gone.
+ */
+const dangling = FEATURE_MAP.flatMap((row) =>
+  row.where
+    .split("·")
+    .map((path) => path.trim())
+    .filter((path) => path.length > 0)
+    .filter((path) =>
+      path.includes("*")
+        ? globSync(path).length === 0
+        : !existsSync(new URL(`../${path}`, import.meta.url)),
+    )
+    .map((path) => `${row.api} → ${path}`),
+);
+
+if (dangling.length > 0) {
+  throw new Error(
+    `lib/reopt/feature-map.ts points at files that do not exist:\n  ${dangling.join("\n  ")}`,
+  );
+}
+
+console.log(
+  `README feature map matches ${FEATURE_MAP.length} source rows, and every file they name exists.`,
+);

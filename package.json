@@ -62,7 +62,8 @@
     "stress:platform": "reopt-data sourcemap upload --dir .stress --path-prefix /_next/static --host-app example-web --platform",
     "events:verify": "reopt-data event verify",
     "events:push": "reopt-data event push --apply --yes",
-    "events:types": "reopt-data event types"
+    "events:types": "reopt-data event types",
+    "replay-assets:build": "node scripts/build-replay-assets.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.1",
