@@ -65,6 +65,11 @@
       "displayName": "Replay lab layout changed",
       "status": "internal",
       "category": "diagnostics"
+    },
+    "$ai_feedback": {
+      "displayName": "AI answer rated",
+      "category": "ai",
+      "rollupProperties": ["$ai_feedback_label"]
     }
   }
 }

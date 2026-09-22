@@ -29,6 +29,8 @@ is real and the assets must not be used to represent reopt or a real merchant.
 - Playwright assertions against payloads built by the real SDK transport.
 - A development outbox worker that preserves per-event device identity.
 - Analysis-ready commerce properties and a synthetic multi-channel journey seed.
+- AI observability: a shop assistant whose Vercel AI SDK calls, tool runs and
+  ratings reach reopt as one trace, with a scripted model when no key is set.
 
 ## Quick start
 
@@ -159,18 +161,19 @@ absent from production unless the deployment explicitly sets
 controlled example deployment because diagnostic payloads can contain visitor
 event data.
 
-| Route              | Integration exercised                                                |
-| ------------------ | -------------------------------------------------------------------- |
-| `/`                | Storefront and integration overview                                  |
-| `/products`        | Query navigation and automatic page views                            |
-| `/products/[slug]` | Manual page views, `register()`, normalization, and `track()`        |
-| `/cart`            | Browser cart events                                                  |
-| `/checkout`        | Server Action and Route Handler conversion paths                     |
-| `/orders`          | Request-scoped orders and demo outbox rows                           |
-| `/account`         | `identify()` on sign-in and `reset()` on sign-out                    |
-| `/guide`           | Capability-to-source map and installed npm package versions          |
-| `/lab`             | Diagnostics-only exceptions, Web Vitals, consent, and queue controls |
-| `/debug/errors`    | Every exception shape, with breadcrumbs and a failing route handler  |
+| Route              | Integration exercised                                                 |
+| ------------------ | --------------------------------------------------------------------- |
+| `/`                | Storefront and integration overview                                   |
+| `/products`        | Query navigation and automatic page views                             |
+| `/products/[slug]` | Manual page views, `register()`, normalization, and `track()`         |
+| `/cart`            | Browser cart events                                                   |
+| `/checkout`        | Server Action and Route Handler conversion paths                      |
+| `/orders`          | Request-scoped orders and demo outbox rows                            |
+| `/account`         | `identify()` on sign-in and `reset()` on sign-out                     |
+| `/guide`           | Capability-to-source map and installed npm package versions           |
+| `/lab`             | Diagnostics-only exceptions, Web Vitals, consent, and queue controls  |
+| `/debug/errors`    | Every exception shape, with breadcrumbs and a failing route handler   |
+| `/lab/ai`          | AI SDK telemetry: `$ai_trace`, `$ai_generation`, `$ai_span`, feedback |
 
 The diagnostics settings exercise automatic page-view ownership, exception
 capture, exception breadcrumbs, an external consent manager, tracing headers,
@@ -194,6 +197,42 @@ rather than report, and with capture off nothing reaches the server. Turn
 **Exception breadcrumbs** on as well to send `$exception_steps` — every button
 records a step before it acts, so whichever one throws carries the trail of the
 clicks before it.
+
+### AI observability (`/lab/ai`)
+
+The assistant is a `generateText` call with one tool, made from a Server
+Action. The call site's only analytics line is `telemetry.integrations`: the
+integration created by `createReoptAiTelemetry()` in
+[`lib/reopt/ai-telemetry.ts`](./lib/reopt/ai-telemetry.ts) sees every model
+step and tool execution through the AI SDK's own hooks.
+
+| Event            | Where it comes from                                                        |
+| ---------------- | -------------------------------------------------------------------------- |
+| `$ai_trace`      | `withAiTrace("assistant-turn")` in `lib/shop/assistant.ts` wraps the turn  |
+| `$ai_span`       | `captureAiSpan()` for the catalogue read, then one per `lookupProduct` run |
+| `$ai_generation` | One per model step, automatic                                              |
+| `$ai_feedback`   | Browser `track()` with the trace id the action returned                    |
+
+Three decisions the page makes visible:
+
+- **A process-wide client, not `getReopt()`.** The integration resolves its
+  client on every callback, and a streamed response ends after the handler has
+  returned, when the request store may be gone. The visitor travels in
+  `runtimeContext` instead, switched on per key in `includeRuntimeContext`, and
+  the `context` hook moves it onto the event's device and profile.
+- **Per call, not `registerTelemetry()`.** Next bundles `ai` into each server
+  module graph, and the AI SDK's global registry is module state of `ai`, so a
+  registration made in one graph is invisible to a call made in another.
+  Passing `telemetry.integrations` is explicit, works from every graph, and is
+  what the unit test hands a fake client through.
+- **No key, same events.** Without `AI_GATEWAY_API_KEY` a scripted
+  `MockLanguageModelV4` from `ai/test` answers through the same `generateText`,
+  so a fresh checkout produces real telemetry with made-up token counts. With
+  the key, the string model id resolves through the Vercel AI Gateway and the
+  events carry its reported cost.
+
+Without server credentials the integration's client source returns `null` and
+it records nothing; the assistant still answers.
 
 ## Capability map
 
@@ -225,6 +264,9 @@ capability changes.
 | Server  | `getBootstrap()`                                       | `app/layout.tsx`                                                                                                                                              |
 | Server  | `getReopt().track()`                                   | `app/actions.ts` · `app/api/orders/route.ts`                                                                                                                  |
 | Server  | `createOnRequestError()`                               | `instrumentation.ts` · `app/api/boom/route.ts`                                                                                                                |
+| Server  | `createReoptAiTelemetry() / telemetry.integrations`    | `lib/reopt/ai-telemetry.ts` · `lib/shop/assistant-model.ts`                                                                                                   |
+| Server  | `withAiTrace() / captureAiSpan() / runtimeContext`     | `lib/shop/assistant.ts` · `app/lab/ai/actions.ts`                                                                                                             |
+| Browser | `track("$ai_feedback")`                                | `components/reopt/ai-lab.tsx`                                                                                                                                 |
 | Proxy   | `reoptProxy({ writeKey: resolver, proxy: true })`      | `proxy.ts`                                                                                                                                                    |
 | Node    | `createReoptNode()` + `identity.deviceId`              | `scripts/forward.ts` · `lib/shop/outbox.ts`                                                                                                                   |
 | Test    | `window.__reoptDevtools`                               | `e2e/*.spec.ts`                                                                                                                                               |
@@ -373,7 +415,7 @@ still does nothing — a dry run stores nothing, so there is nothing to delete.
 ## Validation
 
 ```bash
-pnpm check          # formatting, lint, types, current tree and Git history safety
+pnpm check          # formatting, lint, types, unit tests, feature map and Git history safety
 pnpm e2e            # development server, fail-open and integration contracts
 pnpm e2e:production # secure default plus explicit diagnostic production run
 pnpm e2e:roundtrip  # optional browser → ingest → Query API verification

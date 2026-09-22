@@ -141,6 +141,24 @@ export const FEATURE_MAP: FeatureRow[] = [
     where: "instrumentation.ts · app/api/boom/route.ts",
   },
   {
+    area: "server",
+    api: "createReoptAiTelemetry() / telemetry.integrations",
+    what: "Reports every AI SDK model call and tool execution as $ai_trace · $ai_generation · $ai_span from one process-wide integration",
+    where: "lib/reopt/ai-telemetry.ts · lib/shop/assistant-model.ts",
+  },
+  {
+    area: "server",
+    api: "withAiTrace() / captureAiSpan() / runtimeContext",
+    what: "Groups a turn into one trace, hand-captures the non-AI step, and carries the visitor from the request into every AI event",
+    where: "lib/shop/assistant.ts · app/lab/ai/actions.ts",
+  },
+  {
+    area: "browser",
+    api: 'track("$ai_feedback")',
+    what: "Rates an answer against the trace id the server handed back",
+    where: "components/reopt/ai-lab.tsx",
+  },
+  {
     area: "proxy",
     api: "reoptProxy({ writeKey: resolver, proxy: true })",
     what: "Seeds and removes device cookies and rewrites the first-party /ingest endpoint",

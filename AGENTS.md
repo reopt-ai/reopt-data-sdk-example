@@ -57,3 +57,8 @@ skip themselves and the fail-open contract still runs.
 - `DrawerRoot` uses `onOpenChange` and `animated={false}`. Import
   `createThemeBootScript` from `@reopt-ai/opt-ui/theme/server` in Server
   Components.
+- `ai` is bundled into each server module graph, so a `registerTelemetry()`
+  made in one graph is invisible to a `generateText` in another. Pass the
+  integration as `telemetry.integrations` per call; see `lib/reopt/ai-telemetry.ts`.
+- `/lab/ai` answers with a scripted `ai/test` model unless `AI_GATEWAY_API_KEY`
+  is set. Keep the scripted path exercising the same tool so the events match.

@@ -8,7 +8,11 @@ const FOOTER_LINKS = [
 
 export function SiteFooter({ diagnostics }: { diagnostics: boolean }) {
   const links = diagnostics
-    ? [...FOOTER_LINKS, { href: "/lab", label: "Instrumentation lab" }]
+    ? [
+        ...FOOTER_LINKS,
+        { href: "/lab", label: "Instrumentation lab" },
+        { href: "/lab/ai", label: "AI observability" },
+      ]
     : FOOTER_LINKS;
 
   return (

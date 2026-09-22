@@ -2,13 +2,14 @@
 // Project cmta2v4g60005zfyqq9eya1he. Re-run after changing the catalogue.
 
 /** Every event the catalogue declares. */
-export type ReoptEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "replay.lab.layout_changed" | "replay.lab.started";
+export type ReoptEventName = "$ai_feedback" | "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "replay.lab.layout_changed" | "replay.lab.started";
 
 /** Events that are not archived — the ones new code should emit. */
-export type ReoptActiveEventName = "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "replay.lab.layout_changed" | "replay.lab.started";
+export type ReoptActiveEventName = "$ai_feedback" | "$pageview" | "cart.added" | "cart.removed" | "cart.updated" | "checkout.started" | "checkout.submitted" | "lab.ping" | "order.completed" | "order.reconciled" | "product.viewed" | "replay.lab.layout_changed" | "replay.lab.started";
 
 /** Known property keys per event (the rollup properties). Values are untyped until the catalogue carries a property schema. */
 export interface ReoptEventProperties {
+  "$ai_feedback": { $ai_feedback_label?: unknown; [key: string]: unknown };
   "$pageview": { path?: unknown; utm_source?: unknown; utm_medium?: unknown; utm_campaign?: unknown; [key: string]: unknown };
   "cart.added": { category?: unknown; price_band?: unknown; currency?: unknown; [key: string]: unknown };
   "cart.removed": { category?: unknown; price_band?: unknown; currency?: unknown; [key: string]: unknown };
