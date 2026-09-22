@@ -23,7 +23,7 @@ export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "browser",
     api: 'sessionReplay / setConsent("replay") / flushReplay()',
-    what: "Opt-in recording, privacy, explicit public image/font assets, event/error search checkpoints and revocation (local SDK until next release)",
+    what: "Opt-in recording, privacy, explicit public image/font assets, event/error search checkpoints and revocation",
     where:
       "components/reopt/replay-lab.tsx · components/reopt/analytics-provider.tsx",
   },
