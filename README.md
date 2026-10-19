@@ -257,9 +257,9 @@ capability changes.
 | Browser | `capture.exceptions` / `captureException()`            | `components/reopt/instrumentation-lab.tsx`                                                                                                                    |
 | Browser | `captureException(error, { level, fingerprint })`      | `components/reopt/error-lab.tsx`                                                                                                                              |
 | Browser | `capture.exceptionSteps` / `addExceptionStep()`        | `components/reopt/error-lab.tsx`                                                                                                                              |
-| Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts`                                                                                            |
+| Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts` · `e2e/candidate/consent.spec.ts`                                                          |
 | Browser | `config.fetch / config.observe`                        | `lib/reopt/devtools.ts` · `components/reopt/diagnostic-analytics-provider.tsx` · `components/reopt/devtools-drawer.tsx`                                       |
-| Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx`                                                                                                                    |
+| Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx` · `e2e/candidate/offline.spec.ts`                                                                                  |
 | Server  | `createReopt({ writeKey, credentials, getProfileId })` | `lib/reopt/server.ts`                                                                                                                                         |
 | Server  | `getBootstrap()`                                       | `app/layout.tsx`                                                                                                                                              |
 | Server  | `getReopt().track()`                                   | `app/actions.ts` · `app/api/orders/route.ts`                                                                                                                  |
@@ -494,3 +494,36 @@ page path and errors. Path/error conditions use events within the recording's
 analytics session and time range, including simultaneous tabs. Sparse searches
 may need **Continue search** to inspect older recordings. The roundtrip checks
 that the embedded image decodes and the embedded font loads inside the player.
+
+### SDK delivery regression coverage
+
+The consent lab and `e2e/candidate/consent.spec.ts` exercise a queued event followed by
+withdrawal in the same browser task. Re-granting allows new events but must not
+revive the revoked event. This regression requires the locally corrected SDK
+until that fix is published. Package tests additionally cover project-scoped
+offline recovery, concurrent unload delivery, final in-flight flushes, anonymous
+request isolation, credential rotation, and transport cancellation.
+
+### Isolated verification and dependency modes
+
+`pnpm verify:full` needs Docker and the sibling `reopt-data` checkout (or
+`REOPT_DATA_PATH`). It creates a disposable Data stack, project and credentials,
+then runs development E2E, both production configurations and the materialized
+query roundtrip. It enables replay only in that fixture and drains only its
+queues. Existing developer servers, saved project credentials and deployments
+are not used. Run, ingest and query request ids remain available on failure.
+`pnpm e2e` remains available for standalone browser contracts.
+
+`pnpm verify:quick` accepts only the exact SDK overrides managed by `sdk:local`
+and `sdk:tarball`; secret and Git-history checks remain active. `pnpm check`
+and `pnpm public:safety` still require npm mode for handoff/publishing.
+Switching away from npm saves the exact workspace and lockfile under ignored
+`.sdk-local`; `pnpm sdk:npm` restores both and installs with a frozen lockfile.
+If package configuration changes during development, restoration stops with a
+reconciliation error rather than overwriting those edits.
+
+Candidate regressions in `e2e/candidate` run only with local/tarball packages
+until their SDK fixes are published. The offline test closes two disconnected
+tabs, opens two new documents and checks that both stored event ids reach real
+ingest once and disappear from the durable journal. Published npm contracts
+remain executable independently.

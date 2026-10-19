@@ -36,7 +36,7 @@
     "format": "prettier --write --ignore-unknown .",
     "format:check": "prettier --check --ignore-unknown .",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm feature-map:check && pnpm public:safety",
-    "test": "tsx --test \"lib/**/*.test.ts\"",
+    "test": "node --test scripts/*.test.mjs && tsx --test \"lib/**/*.test.ts\"",
     "feature-map:check": "tsx scripts/check-feature-map.ts",
     "public:safety": "node scripts/check-public-safety.mjs --history",
     "public:safety:staged": "node scripts/check-public-safety.mjs --staged",

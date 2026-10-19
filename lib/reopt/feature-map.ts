@@ -100,8 +100,9 @@ export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "browser",
     api: "consent.persist:false / setConsent()",
-    what: "Lets an external consent banner own persistence and synchronize the SDK",
-    where: "components/reopt/consent-banner.tsx · app/api/consent/route.ts",
+    what: "Lets an external consent banner own persistence; withdrawal discards pending events before re-grant",
+    where:
+      "components/reopt/consent-banner.tsx · app/api/consent/route.ts · e2e/candidate/consent.spec.ts",
   },
   {
     area: "browser",
@@ -113,8 +114,9 @@ export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "browser",
     api: "flush() / pauseTracking() / resumeTracking()",
-    what: "Exercises explicit queue flush, pause, and resume controls",
-    where: "components/reopt/instrumentation-lab.tsx",
+    what: "Exercises flush, pause and resume, plus durable recovery across two closed offline tabs",
+    where:
+      "components/reopt/instrumentation-lab.tsx · e2e/candidate/offline.spec.ts",
   },
   {
     area: "server",

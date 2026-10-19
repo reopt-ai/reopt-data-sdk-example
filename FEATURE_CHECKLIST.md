@@ -9,8 +9,9 @@ Use this checklist whenever the example adopts or changes an SDK capability.
 - [ ] For data-producing features, tag one event with a unique run id and verify browser → ingest → materialization → Query API.
 - [ ] Confirm ingest and query request ids are available for failure correlation without logging credentials.
 - [ ] Run `pnpm verify:quick` during implementation.
-- [ ] Run `pnpm verify:full` before handoff against the published npm package versions declared in `package.json`.
+- [ ] Run `pnpm verify:full` before handoff in the intended npm/local/tarball mode; Docker and the sibling Data checkout provide a disposable project.
 - [ ] Verify the public demo vocabulary, PII filtering, quotas, rate limit, and retention still fit the new events.
-- [ ] Run `pnpm e2e:roundtrip` against staging with deployment credentials and record the run, ingest, and query request ids.
+- [ ] Record the isolated roundtrip run, ingest, and query request ids. Run staging/deployed checks only when explicitly requested.
+- [ ] Restore `pnpm sdk:npm` and confirm the original lockfile is preserved before handoff.
 
 Do not copy local environment files, client secrets, write keys, or captured personal data into issues, logs, fixtures, or commits.

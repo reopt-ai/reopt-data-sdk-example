@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
 import { expect, test } from "@playwright/test";
 
 interface ReplayFixture {
@@ -51,11 +52,18 @@ test("records the real SDK DOM through the proxy, masks mutations, and revokes c
           requestId: grant.requestId,
         });
     }
-    if (path.endsWith("/api/replay/chunk"))
+    if (path.endsWith("/api/replay/chunk")) {
+      const request = response.request();
+      const body = request.postDataBuffer() ?? Buffer.alloc(0);
+      const bytes =
+        request.headers()["content-encoding"] === "gzip"
+          ? gunzipSync(body)
+          : body;
       uploads.push({
-        bytes: response.request().postData() ?? "",
+        bytes: bytes.toString("utf8"),
         requestId: (await response.json()).requestId,
       });
+    }
   });
   await page.goto("/debug/replay");
   const enable = page.getByRole("button", {

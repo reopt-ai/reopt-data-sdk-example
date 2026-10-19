@@ -1,5 +1,5 @@
 import nextEnv from "@next/env";
-import { expect, type Page } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 // Types only — erased at compile time. Reusing the devtool's own types keeps
 // the specs honest: if the recorder's shape changes, these stop compiling
@@ -91,7 +91,7 @@ export async function setFlags(page: Page, flags: string): Promise<void> {
       value: flags,
       url: page.url().startsWith("http")
         ? new URL(page.url()).origin
-        : "http://localhost:4100",
+        : (test.info().project.use.baseURL ?? "http://localhost:4100"),
     },
   ]);
 }

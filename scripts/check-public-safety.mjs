@@ -2,8 +2,14 @@
 
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { managedLocalFile } from "./sdk-state.mjs";
 
 const staged = process.argv.includes("--staged");
+const development = process.argv.includes("--development");
+if (development && staged)
+  throw new Error(
+    "Staged/release safety checks cannot allow local SDK overrides",
+  );
 const history = process.argv.includes("--history") && !staged;
 const files = git(
   staged
@@ -156,6 +162,15 @@ function scanContent(content, source, path) {
 }
 
 function scanDependencyReferences(content, source, path) {
+  // Only this working tree's exact managed SDK references are allowed in dev.
+  // Secret scanning and every history/staged check remain unchanged.
+  if (development && source.endsWith(": working tree")) {
+    try {
+      if (managedLocalFile(process.cwd(), path, content)) return;
+    } catch {
+      failures.push(`${source}: invalid managed SDK overrides`);
+    }
+  }
   if (path.endsWith("package.json")) {
     try {
       const manifest = JSON.parse(content);

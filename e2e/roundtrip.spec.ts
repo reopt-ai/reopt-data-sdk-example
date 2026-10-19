@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { expect, test } from "@playwright/test";
+import { drainIsolatedFixture } from "./isolated";
 
 import { REOPT_SCENARIOS } from "../lib/reopt/scenarios";
 import {
@@ -32,11 +33,43 @@ test.describe("browser to query roundtrip", () => {
   // give the materialized analytics read enough room to cross that boundary.
   test.setTimeout(150_000);
 
+  test.afterEach(async ({ page }, testInfo) => {
+    const evidence = Object.fromEntries(
+      testInfo.annotations
+        .filter(({ type }) =>
+          ["runId", "ingestRequestId", "queryRequestId"].includes(type),
+        )
+        .map(({ type, description }) => [type, description]),
+    );
+    if (!evidence.runId) return;
+    if (!evidence.ingestRequestId && !page.isClosed()) {
+      try {
+        const batch = (await batches(page)).find((item) =>
+          item.events.some(
+            (event) =>
+              event.payload?.properties?.[
+                REOPT_SCENARIOS.roundtrip.runIdProperty
+              ] === evidence.runId,
+          ),
+        );
+        evidence.ingestRequestId = ingestRequestId(batch) ?? "unavailable";
+      } catch {
+        // A page that crashed before recording a response has no request id.
+      }
+    }
+    console.log(`[roundtrip] ${JSON.stringify(evidence)}`);
+    await testInfo.attach("roundtrip-correlation", {
+      body: JSON.stringify(evidence),
+      contentType: "application/json",
+    });
+  });
+
   test("correlates one browser event through ingest and materialized query data", async ({
     page,
   }, testInfo) => {
     if (!tenant) return;
     const runId = randomUUID();
+    testInfo.annotations.push({ type: "runId", description: runId });
     await page.goto(`/lab?demoRunId=${runId}`);
     await waitForHydration(page);
     await page.evaluate(() => window.__reoptDevtools?.clear());
@@ -71,12 +104,17 @@ test.describe("browser to query roundtrip", () => {
       ),
     );
     const ingestId = ingestRequestId(ingestBatch);
+    testInfo.annotations.push({
+      type: "ingestRequestId",
+      description: ingestId ?? "missing",
+    });
     expect(ingestId).toBeTruthy();
 
     let queryRequestId: string | undefined;
     await expect
       .poll(
         async () => {
+          await drainIsolatedFixture();
           const now = new Date();
           // Use Node fetch instead of Playwright's request fixture. Playwright
           // includes request headers in connection-error reports, which would
@@ -107,6 +145,16 @@ test.describe("browser to query roundtrip", () => {
               }),
             },
           );
+          queryRequestId = response.headers.get("x-request-id") ?? undefined;
+          const annotation = testInfo.annotations.find(
+            (item) => item.type === "queryRequestId",
+          );
+          if (annotation) annotation.description = queryRequestId ?? "missing";
+          else
+            testInfo.annotations.push({
+              type: "queryRequestId",
+              description: queryRequestId ?? "missing",
+            });
           expect(response.ok, `Query API returned ${response.status}`).toBe(
             true,
           );
@@ -114,7 +162,7 @@ test.describe("browser to query roundtrip", () => {
             data?: { series?: Array<{ count?: number }> };
             meta?: { requestId?: string };
           };
-          queryRequestId = body.meta?.requestId;
+          expect(body.meta?.requestId).toBe(queryRequestId);
           return (
             body.data?.series?.reduce(
               (sum, point) => sum + (point.count ?? 0),
@@ -131,10 +179,5 @@ test.describe("browser to query roundtrip", () => {
       .toBeGreaterThan(0);
 
     expect(queryRequestId).toBeTruthy();
-    testInfo.annotations.push(
-      { type: "runId", description: runId },
-      { type: "ingestRequestId", description: ingestId ?? "missing" },
-      { type: "queryRequestId", description: queryRequestId ?? "missing" },
-    );
   });
 });

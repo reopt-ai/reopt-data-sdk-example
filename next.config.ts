@@ -19,6 +19,9 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  ...(process.env.REOPT_DATA_EXAMPLE_DIST_DIR
+    ? { distDir: process.env.REOPT_DATA_EXAMPLE_DIST_DIR }
+    : {}),
   poweredByHeader: false,
   reactStrictMode: true,
   // Browser source maps are what makes the uploaded symbol sets mean anything:

@@ -31,7 +31,7 @@ export default defineConfig({
     types: "./lib/reopt-events.d.ts",
   },
   sourcemaps: {
-    dir: ".next/static",
+    dir: `${process.env.REOPT_DATA_EXAMPLE_DIST_DIR || ".next"}/static`,
     urlPrefix: "http://localhost:4100/_next/static",
   },
 });

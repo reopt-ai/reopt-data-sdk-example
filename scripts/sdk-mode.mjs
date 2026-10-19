@@ -15,20 +15,20 @@ import {
 import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  packages,
+  marker,
+  markerEnd,
+  stripManagedBlock,
+  saveNpmState,
+  restoreNpmState,
+  finishNpmRestore,
+} from "./sdk-state.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const workspaceFile = join(root, "pnpm-workspace.yaml");
 const tarballDir = join(root, ".sdk-local", "packages");
-const packages = [
-  "@reopt-ai/data-contract",
-  "@reopt-ai/data-sdk-client",
-  "@reopt-ai/data-sdk-devtool",
-  "@reopt-ai/data-sdk-server",
-  "@reopt-ai/data-cli",
-];
 const monorepo = resolve(root, process.env.REOPT_DATA_PATH ?? "../reopt-data");
-const marker = "# BEGIN sdk:local — managed by scripts/sdk-mode.mjs";
-const markerEnd = "# END sdk:local";
 
 function packageDir(name) {
   return join(monorepo, "packages", name.replace("@reopt-ai/", ""));
@@ -57,17 +57,6 @@ function run(command, args, cwd = root) {
  * next entry. Two spaces per round, until `pnpm install` refused the file with
  * "bad indentation of a mapping entry".
  */
-function stripManagedBlock(text) {
-  const lines = text.split("\n");
-  const start = lines.findIndex((line) => line.trim() === marker);
-  if (start === -1) return text;
-  const end = lines.findIndex(
-    (line, index) => index >= start && line.trim() === markerEnd,
-  );
-  if (end === -1) throw new Error("sdk:local workspace block is incomplete");
-  return [...lines.slice(0, start), ...lines.slice(end + 1)].join("\n");
-}
-
 function writeOverrides(lines) {
   const clean = stripManagedBlock(readFileSync(workspaceFile, "utf8"));
   // Markers indented to match the mapping they live in, so the formatter has
@@ -85,6 +74,7 @@ function install() {
 
 function setLocal() {
   requireLocalPackages();
+  saveNpmState(root);
   writeOverrides(
     packages.map(
       (name) => `  "${name}": link:${relative(root, packageDir(name))}`,
@@ -96,6 +86,7 @@ function setLocal() {
 
 function setTarball() {
   requireLocalPackages();
+  saveNpmState(root);
   rmSync(tarballDir, { recursive: true, force: true });
   mkdirSync(tarballDir, { recursive: true });
   const overrides = [];
@@ -125,11 +116,9 @@ function setTarball() {
 }
 
 function setNpm() {
-  writeFileSync(
-    workspaceFile,
-    stripManagedBlock(readFileSync(workspaceFile, "utf8")),
-  );
-  install();
+  restoreNpmState(root);
+  run("pnpm", ["install", "--frozen-lockfile"]);
+  finishNpmRestore(root);
   status();
 }
 
