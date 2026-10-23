@@ -34,7 +34,7 @@ is real and the assets must not be used to represent reopt or a real merchant.
 
 ## Quick start
 
-Requirements: Node.js 22.22.1 or newer and pnpm 10.30.1.
+Requirements: Node.js 22.22.1 or newer and pnpm 12.15.0.
 
 ```bash
 corepack enable

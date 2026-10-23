@@ -6,7 +6,7 @@ keep the SDK boundary explicit and the example easy to inspect.
 
 ## Before you start
 
-- Use Node.js 22.22.1 or newer and pnpm 10.30.1.
+- Use Node.js 22.22.1 or newer and pnpm 12.15.0.
 - Work on the `staging` branch or a branch based on `staging`.
 - Target pull requests to `main` only after the change has been validated on
   `staging`.
