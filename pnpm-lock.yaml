@@ -173,6 +173,9 @@ importers:
       '@codemirror/autocomplete':
         specifier: 6.20.1
         version: 6.20.1
+      '@codemirror/commands':
+        specifier: 6.11.1
+        version: 6.11.1
       '@codemirror/lang-sql':
         specifier: 6.10.0
         version: 6.10.0
@@ -198,11 +201,11 @@ importers:
         specifier: 0.8.0
         version: 0.8.0(next@16.4.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
       '@reopt-ai/opt-datagrid':
-        specifier: 1.6.0
-        version: 1.6.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 1.7.0
+        version: 1.7.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@reopt-ai/opt-ui':
-        specifier: 1.10.0
-        version: 1.10.0(@codemirror/autocomplete@6.20.1)(@codemirror/lang-sql@6.10.0)(@codemirror/state@6.7.1)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.43.9)(@types/react@19.3.0)(next@16.4.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(redux@5.0.1)
+        specifier: 2.3.0
+        version: 2.3.0(@codemirror/autocomplete@6.20.1)(@codemirror/commands@6.11.1)(@codemirror/lang-sql@6.10.0)(@codemirror/state@6.7.1)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.43.9)(@types/react@19.3.0)(next@16.4.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react-is@19.2.8)(react@19.3.1)(redux@5.0.1)
       ai:
         specifier: 7.0.109
         version: 7.0.109(zod@4.4.3)
@@ -403,6 +406,9 @@ packages:
 
   '@codemirror/autocomplete@6.20.1':
     resolution: {integrity: sha512-1cvg3Vz1dSSToCNlJfRA2WSI4ht3K+WplO0UMOgmUYPivCyy2oueZY6Lx7M9wThm7SDUBViRmuT+OG/i8+ON9A==}
+
+  '@codemirror/commands@6.11.1':
+    resolution: {integrity: sha512-O/4hG3SC1YwcmQ0d2UVNDs+AsaNWd1iHVxbTeEBuqH+6bExAiPK3iS/BvpY6rZGURALv4ZD3sIgcCmRvw3ehBg==}
 
   '@codemirror/lang-sql@6.10.0':
     resolution: {integrity: sha512-6ayPkEd/yRw0XKBx5uAiToSgGECo/GY2NoJIHXIIQh1EVwLuKoU8BP/qK0qH5NLXAbtJRLuT73hx7P9X34iO4w==}
@@ -1134,36 +1140,41 @@ packages:
       next:
         optional: true
 
-  '@reopt-ai/opt-charts@1.3.0':
-    resolution: {integrity: sha512-+FG9VLdO1IzyYKutaiV0VADeNfpHvrItQzNitEZWaLs9waA3PNCBHUxEIO1zE5UMDYWa6+VQcPP7fZhaVtPKbg==}
+  '@reopt-ai/opt-charts@1.10.0':
+    resolution: {integrity: sha512-n0BoIs5DA0jGqzm+ViF8uuh1cehOKIC51oagAqfGHMb4YtzaDyzQ3ije5Y2f5+94G5lICMEDyjdSAtCHdqXT6w==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.0.0
       react-dom: ^19.0.0
 
-  '@reopt-ai/opt-datagrid@1.6.0':
-    resolution: {integrity: sha512-aZDmEuru9wXVGtfiD3mBckiqB2MjR0GOyrg890Npg84FFax7AkvEkYCEOxfuTf8/z5vtZhkFtUfEMslSnf4ugw==}
+  '@reopt-ai/opt-datagrid@1.7.0':
+    resolution: {integrity: sha512-hyhTH+pe1jeh/VgLOSDtssQ/k6do2L+LtLZrxkYgKQLVa9CfG9dcmgUqwlBj42rGkHV+y7l2mfcLDpxLLr4GsQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.0.0
       react-dom: ^19.0.0
 
-  '@reopt-ai/opt-palette@1.0.0':
-    resolution: {integrity: sha512-wSSvTxGEgBwuGDhPccGm8OjXihNgge49utFb2KVE21jMWtG0ZyE5DfDigl2VzhBz7SfJ5abV8bt+EGxfe2jnlA==}
+  '@reopt-ai/opt-meta@0.1.0':
+    resolution: {integrity: sha512-Qz5QttNnQQlf1/njknp2YoiLaI9t3F9iFD2kwmQa5QMfx1UNuxYydd8C223yQxp7kKIvlfusGfgKepXtRmQ5Nw==}
     engines: {node: '>=20.0.0'}
 
-  '@reopt-ai/opt-ui-primitives@1.5.1':
-    resolution: {integrity: sha512-zCbHdKuc9N9GrKObruOSCtWyabVrVeJdf6LlD/ZLtJxXjDbLmj/GtwjHn8BVkvYXpFtMINZltM1gMMrE7vkgpA==}
+  '@reopt-ai/opt-palette@1.2.0':
+    resolution: {integrity: sha512-2JKlc+Gr28tZpF6bx7vwjL0Ns/5huFxshY30a9LxjCzoqbFmQ9ofS+VfZhWvort3Q5E/vcNEWZQY/9x3CrnAmg==}
+    engines: {node: '>=20.0.0'}
+
+  '@reopt-ai/opt-ui-primitives@1.6.0':
+    resolution: {integrity: sha512-/ZwMz7xcT1DvfD0uOvIfy76p6t5r4SFcAT41M4WuF/NwUxfsAAO5vw3Kc0qEeMj0KqakDEfOESzewS6LauXzjA==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.0.0
       react-dom: ^19.0.0
 
-  '@reopt-ai/opt-ui@1.10.0':
-    resolution: {integrity: sha512-khalivvIX4K1cDZQg3ftNwiPJHmVsTkoUiAv5+7QtcVsnRTMuc145CF/zAGPipp6scHlRIPAyNdacSy7jC1ZSQ==}
+  '@reopt-ai/opt-ui@2.3.0':
+    resolution: {integrity: sha512-GVhucbJT3mJlkEGyAswVyqAIyyyXNe+MJaHJqEvhh4bIgvtmF0oQ4WmrVLqmyJn3szYSXoNwxm1oyX7x1ocS5A==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       '@codemirror/autocomplete': ^6.20.1
+      '@codemirror/commands': ^6.11.1
       '@codemirror/lang-sql': ^6.10.0
       '@codemirror/state': ^6.5.4
       '@codemirror/theme-one-dark': ^6.1.3
@@ -1173,6 +1184,8 @@ packages:
       react-dom: ^19.0.0
     peerDependenciesMeta:
       '@codemirror/autocomplete':
+        optional: true
+      '@codemirror/commands':
         optional: true
       '@codemirror/lang-sql':
         optional: true
@@ -1776,15 +1789,19 @@ packages:
     engines: {node: '>=22.22.1'}
     hasBin: true
 
-  lucide-react@0.577.0:
-    resolution: {integrity: sha512-4LjoFv2eEPwYDPg/CUdBJQSDfPyzXCRrVW1X7jrx/trgxnxkHFjnVZINbzvzxjN70dxychOfg+FTYwBiS3pQ5A==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   lucide-react@1.33.0:
     resolution: {integrity: sha512-MTRwMy0ZlL8Ur/vOAiJ9XGHE+kFPC7brq6MxAm0GiGXEBj0qy0jA/pG4N675oSzciO/UCdX8T+5yUQdmDeTLxg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lucide-react@1.61.0:
+    resolution: {integrity: sha512-v2SQPPPNjnr+BlhL9Spuzmo5yR+hLkftfuE4E3jaxdNPgSH0hJKPcLJBP7yAta87jQNPsSERS59PJjCJ/CorBA==}
+    peerDependencies:
+      '@types/react': 19.3.0
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -1954,8 +1971,8 @@ packages:
       redux:
         optional: true
 
-  react-resizable-panels@4.12.3:
-    resolution: {integrity: sha512-GHMJWnDXui/3RX4bT+cgBP+N3N2nkwcoZATr/2xLFpqQQe7TlBrE0cGM0dUa9ceT7A90tUrSRsiqgRG+g0/2AA==}
+  react-resizable-panels@4.14.8:
+    resolution: {integrity: sha512-kVot7JCIZct85ZY87vww95R7tI25VSTjHpEAIIy2YcsOtbtwG6l1+vDD6TCYgmgE/JSp0ADqNooHn97Y6dMOFw==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -2072,8 +2089,8 @@ packages:
   tabbable@6.5.0:
     resolution: {integrity: sha512-wieBHXygIm7OyQOu5hQlkk62/WyCFYGlWg7L6/ZCUZwx0o398Zkn4pVmMyfYhfMG8kGrj/Krt8eIk6UKC6VzwA==}
 
-  tailwind-merge@3.6.0:
-    resolution: {integrity: sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==}
+  tailwind-merge@3.7.0:
+    resolution: {integrity: sha512-XPPUyAc+cvspz3lHTcR/QgPfW2A0lv/xQNIjX3HGhLR+Nq2lHaLq5MtTesHn8GUr3W3DguT2KT5x3NVgRtYwmA==}
 
   tailwindcss@4.3.3:
     resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
@@ -2242,6 +2259,13 @@ snapshots:
   '@better-fetch/fetch@1.3.1': {}
 
   '@codemirror/autocomplete@6.20.1':
+    dependencies:
+      '@codemirror/language': 6.12.4
+      '@codemirror/state': 6.7.1
+      '@codemirror/view': 6.43.9
+      '@lezer/common': 1.5.2
+
+  '@codemirror/commands@6.11.1':
     dependencies:
       '@codemirror/language': 6.12.4
       '@codemirror/state': 6.7.1
@@ -2799,47 +2823,51 @@ snapshots:
     optionalDependencies:
       next: 16.4.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
 
-  '@reopt-ai/opt-charts@1.3.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@19.2.8)(react@19.3.1)(redux@5.0.1)':
+  '@reopt-ai/opt-charts@1.10.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@19.2.8)(react@19.3.1)(redux@5.0.1)':
     dependencies:
+      '@reopt-ai/opt-meta': 0.1.0
       clsx: 2.1.1
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
       recharts: 3.10.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@19.2.8)(react@19.3.1)(redux@5.0.1)
-      tailwind-merge: 3.6.0
+      tailwind-merge: 3.7.0
     transitivePeerDependencies:
       - '@types/react'
       - react-is
       - redux
 
-  '@reopt-ai/opt-datagrid@1.6.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@reopt-ai/opt-datagrid@1.7.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
 
-  '@reopt-ai/opt-palette@1.0.0': {}
+  '@reopt-ai/opt-meta@0.1.0': {}
 
-  '@reopt-ai/opt-ui-primitives@1.5.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@reopt-ai/opt-palette@1.2.0': {}
+
+  '@reopt-ai/opt-ui-primitives@1.6.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@floating-ui/react': 0.27.20(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
 
-  '@reopt-ai/opt-ui@1.10.0(@codemirror/autocomplete@6.20.1)(@codemirror/lang-sql@6.10.0)(@codemirror/state@6.7.1)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.43.9)(@types/react@19.3.0)(next@16.4.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(redux@5.0.1)':
+  '@reopt-ai/opt-ui@2.3.0(@codemirror/autocomplete@6.20.1)(@codemirror/commands@6.11.1)(@codemirror/lang-sql@6.10.0)(@codemirror/state@6.7.1)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.43.9)(@types/react@19.3.0)(next@16.4.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react-is@19.2.8)(react@19.3.1)(redux@5.0.1)':
     dependencies:
-      '@reopt-ai/opt-charts': 1.3.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@19.2.8)(react@19.3.1)(redux@5.0.1)
-      '@reopt-ai/opt-palette': 1.0.0
-      '@reopt-ai/opt-ui-primitives': 1.5.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@reopt-ai/opt-charts': 1.10.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@19.2.8)(react@19.3.1)(redux@5.0.1)
+      '@reopt-ai/opt-meta': 0.1.0
+      '@reopt-ai/opt-palette': 1.2.0
+      '@reopt-ai/opt-ui-primitives': 1.6.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       clsx: 2.1.1
-      lucide-react: 0.577.0(react@19.3.1)
+      lucide-react: 1.61.0(@types/react@19.3.0)(react@19.3.1)
       match-sorter: 8.3.0
       ogl: 1.0.11
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
-      react-is: 19.2.8
-      react-resizable-panels: 4.12.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      tailwind-merge: 3.6.0
+      react-resizable-panels: 4.14.8(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      tailwind-merge: 3.7.0
     optionalDependencies:
       '@codemirror/autocomplete': 6.20.1
+      '@codemirror/commands': 6.11.1
       '@codemirror/lang-sql': 6.10.0
       '@codemirror/state': 6.7.1
       '@codemirror/theme-one-dark': 6.1.3
@@ -2847,6 +2875,7 @@ snapshots:
       next: 16.4.2(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
     transitivePeerDependencies:
       - '@types/react'
+      - react-is
       - redux
 
   '@rrweb/record@2.1.6':
@@ -3309,13 +3338,15 @@ snapshots:
     optionalDependencies:
       yaml: 2.9.0
 
-  lucide-react@0.577.0(react@19.3.1):
-    dependencies:
-      react: 19.3.1
-
   lucide-react@1.33.0(react@19.3.1):
     dependencies:
       react: 19.3.1
+
+  lucide-react@1.61.0(@types/react@19.3.0)(react@19.3.1):
+    dependencies:
+      react: 19.3.1
+    optionalDependencies:
+      '@types/react': 19.3.0
 
   magic-string@0.30.21:
     dependencies:
@@ -3439,7 +3470,7 @@ snapshots:
       '@types/react': 19.3.0
       redux: 5.0.1
 
-  react-resizable-panels@4.12.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
+  react-resizable-panels@4.14.8(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
@@ -3573,7 +3604,7 @@ snapshots:
 
   tabbable@6.5.0: {}
 
-  tailwind-merge@3.6.0: {}
+  tailwind-merge@3.7.0: {}
 
   tailwindcss@4.3.3: {}
 
