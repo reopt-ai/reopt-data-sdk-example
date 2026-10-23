@@ -75,10 +75,12 @@ export async function SiteHeader({
             href="/cart"
             className="focus-ring flex items-center gap-1.5 rounded-full border border-border px-2.5 py-2 hover:border-border-hover hover:text-accent sm:px-3"
             data-testid="cart-link"
-            aria-label={`Cart with ${cartCount} items`}
+            // Starts with the visible "Cart 0" so speech input can target it
+            // by what is on screen (WCAG 2.5.3, axe label-content-name-mismatch).
+            aria-label={`Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
           >
             <ShoppingBag className="size-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Cart</span>
+            <span className="hidden sm:inline">Cart</span>{" "}
             <Badge variant={cartCount > 0 ? "info" : "default"}>
               {cartCount}
             </Badge>
