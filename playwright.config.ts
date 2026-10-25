@@ -39,6 +39,8 @@ export default defineConfig({
     /(^|\/)(roundtrip|deployed|production-safety|production-diagnostics|devtool-visual)\.spec\.ts$/,
     ...(candidate ? [] : [/\/candidate\//]),
   ],
+  // Compiles every visited route before the first test; see the file.
+  globalSetup: "./e2e/warm-dev-server.ts",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
