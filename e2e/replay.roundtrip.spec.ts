@@ -150,14 +150,18 @@ test("records the real SDK DOM through the proxy, masks mutations, and revokes c
   await page.getByTestId("replay-flush").click();
   expect(uploads).toHaveLength(count);
   const run = await page.getByTestId("replay-run-id").innerText();
+  // Ids only, no token or secret. Printed as well as attached, because the
+  // list reporter shows no attachments for a passing run.
+  const correlation = JSON.stringify({
+    runId: run.replace(/^Run:\s*/, ""),
+    streamId: stream.streamId,
+    sessionId: stream.sessionId,
+    ingestRequestId: stream.requestId,
+    chunkRequestIds: uploads.map((upload) => upload.requestId),
+  });
+  console.log(`[replay] ${correlation}`);
   await testInfo.attach("replay-correlation", {
-    body: JSON.stringify({
-      run,
-      streamId: stream.streamId,
-      sessionId: stream.sessionId,
-      ingestRequestId: stream.requestId,
-      chunkRequestIds: uploads.map((upload) => upload.requestId),
-    }),
+    body: correlation,
     contentType: "application/json",
   });
 
