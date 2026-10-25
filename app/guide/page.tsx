@@ -34,7 +34,7 @@ export default function GuidePage() {
             <span key={entry.name} className="font-mono">
               {entry.name}@{entry.version}
               <Badge className="ml-2" variant="default">
-                npm
+                {entry.source}
               </Badge>
             </span>
           ))}
