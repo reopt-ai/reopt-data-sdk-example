@@ -113,6 +113,12 @@ export const FEATURE_MAP: FeatureRow[] = [
   },
   {
     area: "browser",
+    api: "reopt-sdk request header",
+    what: "Every ingest batch names the client release that sent it",
+    where: "e2e/analytics-contract.spec.ts",
+  },
+  {
+    area: "browser",
     api: "flush() / pauseTracking() / resumeTracking()",
     what: "Exercises flush, pause and resume, plus durable recovery across two closed offline tabs",
     where:

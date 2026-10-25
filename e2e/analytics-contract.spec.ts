@@ -1,4 +1,7 @@
+import { readFileSync } from "node:fs";
+
 import { expect, test } from "@playwright/test";
+import { SDK_HEADER } from "@reopt-ai/data-contract/identity";
 
 import { batches, navigate, setFlags, waitForEvent } from "./fixtures";
 
@@ -69,5 +72,24 @@ test.describe("analytics contract", () => {
     await navigate(page, /Cart/);
     const leave = await waitForEvent(page, "$pageleave");
     expect(leave.payload?.properties?.page_id).toBe("product:halo-desk-lamp");
+  });
+
+  test("every batch names the SDK that sent it", async ({ page }) => {
+    // Ingest counts projects per SDK release from this header, which is how an
+    // operator finds the ones still running a release with a known defect.
+    const { version } = JSON.parse(
+      readFileSync(
+        "node_modules/@reopt-ai/data-sdk-client/package.json",
+        "utf8",
+      ),
+    ) as { version: string };
+    await setFlags(page, "autoPageview");
+    await page.goto("/products/aster-65");
+    await waitForEvent(page, "$pageview");
+
+    const sent = await batches(page);
+    expect(sent.length).toBeGreaterThan(0);
+    for (const batch of sent)
+      expect(batch.headers[SDK_HEADER]).toBe(`data-sdk-client/${version}`);
   });
 });
