@@ -113,6 +113,12 @@ export const FEATURE_MAP: FeatureRow[] = [
   },
   {
     area: "browser",
+    api: "Retry-After quota hold / RecordedBatch.deferred",
+    what: "A quota refusal or a partly accepted batch stops delivery until Retry-After instead of retrying",
+    where: "e2e/quota-hold.spec.ts",
+  },
+  {
+    area: "browser",
     api: "reopt-sdk request header",
     what: "Every ingest batch names the client release that sent it",
     where: "e2e/analytics-contract.spec.ts",
