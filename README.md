@@ -522,7 +522,10 @@ request isolation, credential rotation, and transport cancellation.
 `REOPT_DATA_PATH`). It creates a disposable Data stack, project and credentials,
 then runs development E2E, both production configurations and the materialized
 query roundtrip. It enables replay only in that fixture and drains only its
-queues. Existing developer servers, saved project credentials and deployments
+queues. Both roundtrips, including the session replay recording in the
+development and diagnostic production runs, read the one fixture named by
+`REOPT_ROUNDTRIP_TEST_FIXTURE` through `e2e/isolated.ts`, which refuses a
+fixture from another run or a non-loopback origin. Existing developer servers, saved project credentials and deployments
 are not used. Run, ingest and query request ids remain available on failure.
 `pnpm e2e` remains available for standalone browser contracts.
 

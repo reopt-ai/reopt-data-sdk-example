@@ -1,18 +1,9 @@
-import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { expect, test } from "@playwright/test";
 
-interface ReplayFixture {
-  baseUrl: string;
-  token: string;
-  projectId: string;
-  orgId: string;
-  environment: { CRON_SECRET: string };
-}
-const fixturePath = process.env.REOPT_REPLAY_TEST_FIXTURE;
-const fixture = fixturePath
-  ? (JSON.parse(readFileSync(fixturePath, "utf8")) as ReplayFixture)
-  : null;
+import { readIsolatedFixture } from "./isolated";
+
+const fixture = readIsolatedFixture();
 
 test("records the real SDK DOM through the proxy, masks mutations, and revokes consent", async ({
   page,
