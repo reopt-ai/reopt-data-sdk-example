@@ -7,14 +7,13 @@ minimumReleaseAgeExclude:
   - next
   - "@next/*"
   - postcss
-  - "@reopt-ai/opt-ui@1.10.0 || 3.0.0"
-  - "@reopt-ai/opt-datagrid@1.6.0"
-  - "@reopt-ai/data-contract@0.13.0"
-  - "@reopt-ai/data-sdk-client@0.5.0"
-  - "@reopt-ai/data-sdk-devtool@0.2.0"
-  - "@reopt-ai/data-sdk-server@0.5.0"
-  - "@reopt-ai/data-cli@0.1.0"
+  - "@reopt-ai/opt-ui@3.0.0"
   - "@reopt-ai/opt-ui-primitives@1.6.1"
+  - "@reopt-ai/data-contract@0.17.0"
+  - "@reopt-ai/data-sdk-client@0.8.0"
+  - "@reopt-ai/data-sdk-devtool@0.3.0"
+  - "@reopt-ai/data-sdk-server@0.9.0"
+  - "@reopt-ai/data-cli@0.2.0"
 
 overrides:
   "@types/react": 19.3.0

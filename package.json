@@ -66,10 +66,10 @@
     "replay-assets:build": "node scripts/build-replay-assets.mjs"
   },
   "dependencies": {
-    "@reopt-ai/data-contract": "0.16.0",
-    "@reopt-ai/data-sdk-client": "0.7.0",
-    "@reopt-ai/data-sdk-devtool": "0.2.1",
-    "@reopt-ai/data-sdk-server": "0.8.0",
+    "@reopt-ai/data-contract": "0.17.0",
+    "@reopt-ai/data-sdk-client": "0.8.0",
+    "@reopt-ai/data-sdk-devtool": "0.3.0",
+    "@reopt-ai/data-sdk-server": "0.9.0",
     "@reopt-ai/opt-datagrid": "1.7.0",
     "@reopt-ai/opt-ui": "3.0.0",
     "ai": "7.0.148",
@@ -86,7 +86,7 @@
     "@commitlint/config-conventional": "^21.2.4",
     "@next/env": "16.4.2",
     "@playwright/test": "1.64.1",
-    "@reopt-ai/data-cli": "0.1.0",
+    "@reopt-ai/data-cli": "0.2.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.5",
     "@types/react": "19.3.0",
