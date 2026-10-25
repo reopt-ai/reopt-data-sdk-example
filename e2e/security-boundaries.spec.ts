@@ -97,4 +97,24 @@ test.describe("security boundaries", () => {
     expect(response.headers()["x-frame-options"]).toBe("DENY");
     expect(response.headers()["x-powered-by"]).toBeUndefined();
   });
+
+  test("the ingest proxy forwards only the SDK's ingest endpoints", async ({
+    request,
+  }) => {
+    // `/ingest/*` is a first-party path on this origin. Forwarding all of it
+    // would expose the deployment's other APIs under the shop's cookies.
+    for (const path of [
+      "/ingest/api/v1/projects",
+      "/ingest/api/export/events",
+    ]) {
+      const response = await request.get(path);
+      expect(response.status(), path).toBe(400);
+      expect(await response.text(), path).toBe(
+        "Invalid ingest rewrite destination",
+      );
+    }
+    // An allowed path is still rewritten; ingest answers whatever it answers.
+    const track = await request.post("/ingest/api/track", { data: [] });
+    expect(await track.text()).not.toBe("Invalid ingest rewrite destination");
+  });
 });

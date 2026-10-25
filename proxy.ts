@@ -29,7 +29,10 @@ const withReopt = reoptProxy({
   baseUrl: reoptBaseUrl(),
   // `/ingest/*` → `${baseUrl}/*`. The browser SDK is configured with
   // `baseUrl: "/ingest"` and sends `/ingest/api/track`, so ingest arrives as
-  // first-party traffic on this domain.
+  // first-party traffic on this domain. Only `INGEST_PROXY_PATHS` (track and
+  // the two replay uploads) are forwarded; any other path answers 400, and
+  // the site's `Cookie`, `Authorization` and `Proxy-Authorization` headers
+  // never reach the reopt-data deployment.
   proxy: true,
 });
 

@@ -163,8 +163,8 @@ export const FEATURE_MAP: FeatureRow[] = [
   {
     area: "proxy",
     api: "reoptProxy({ writeKey: resolver, proxy: true })",
-    what: "Seeds and removes device cookies and rewrites the first-party /ingest endpoint",
-    where: "proxy.ts",
+    what: "Seeds and removes device cookies and rewrites only the SDK's ingest endpoints under /ingest, without site credentials",
+    where: "proxy.ts · e2e/security-boundaries.spec.ts",
   },
   {
     area: "node",
