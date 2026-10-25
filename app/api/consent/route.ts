@@ -43,6 +43,8 @@ export async function POST(request: Request): Promise<Response> {
   if (!writeKey) return NextResponse.json({ ok: true, recorded: false });
 
   const response = NextResponse.json({ ok: true, recorded: true });
+  // Only the opt-out category: the server tracks no events in another
+  // category, which the server SDK sends only when this cookie grants it.
   const value = serializeConsentCookie({
     [OPT_OUT_CONSENT_CATEGORY]: parsed.data.granted,
   });

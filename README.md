@@ -286,6 +286,16 @@ it exposes only the public write key and endpoint. The separate
 Replace the public adapter with a host-aware project store if your application
 serves multiple projects; keep credentials behind the same server boundary.
 
+### Server-side consent categories
+
+The banner decides `analytics` and `marketing` together, but
+[`app/api/consent/route.ts`](./app/api/consent/route.ts) records only
+`analytics` in the consent cookie, because that is the category the proxy's
+opt-out reads. The server SDK sends an event with any other `consentCategory`
+only when that cookie grants the category, and refuses an undecided one with
+`consent_denied`. This app tracks no such events on the server. If yours does,
+record each category the banner decides in the same cookie.
+
 ### Delayed events
 
 Checkout records the request-verified identity with each demo outbox row.
