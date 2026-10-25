@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { REOPT_SCENARIOS } from "../../lib/reopt/scenarios";
-import { events, waitForEvent, waitForHydration } from "../fixtures";
+import { REOPT_SCENARIOS } from "../lib/reopt/scenarios";
+import { events, waitForEvent, waitForHydration } from "./fixtures";
 
 test("withdrawal discards a queued event instead of reviving it on re-grant", async ({
   page,

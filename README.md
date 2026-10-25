@@ -257,9 +257,9 @@ capability changes.
 | Browser | `capture.exceptions` / `captureException()`            | `components/reopt/instrumentation-lab.tsx`                                                                                                                    |
 | Browser | `captureException(error, { level, fingerprint })`      | `components/reopt/error-lab.tsx`                                                                                                                              |
 | Browser | `capture.exceptionSteps` / `addExceptionStep()`        | `components/reopt/error-lab.tsx`                                                                                                                              |
-| Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts` · `e2e/candidate/consent.spec.ts`                                                          |
+| Browser | `consent.persist:false` / `setConsent()`               | `components/reopt/consent-banner.tsx` · `app/api/consent/route.ts` · `e2e/consent-withdrawal.spec.ts`                                                         |
 | Browser | `config.fetch / config.observe`                        | `lib/reopt/devtools.ts` · `components/reopt/diagnostic-analytics-provider.tsx` · `components/reopt/devtools-drawer.tsx`                                       |
-| Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx` · `e2e/candidate/offline.spec.ts`                                                                                  |
+| Browser | `flush()` / `pauseTracking()` / `resumeTracking()`     | `components/reopt/instrumentation-lab.tsx` · `e2e/offline-recovery.spec.ts`                                                                                   |
 | Server  | `createReopt({ writeKey, credentials, getProfileId })` | `lib/reopt/server.ts`                                                                                                                                         |
 | Server  | `getBootstrap()`                                       | `app/layout.tsx`                                                                                                                                              |
 | Server  | `getReopt().track()`                                   | `app/actions.ts` · `app/api/orders/route.ts`                                                                                                                  |
@@ -497,10 +497,10 @@ that the embedded image decodes and the embedded font loads inside the player.
 
 ### SDK delivery regression coverage
 
-The consent lab and `e2e/candidate/consent.spec.ts` exercise a queued event followed by
+The consent lab and `e2e/consent-withdrawal.spec.ts` exercise a queued event followed by
 withdrawal in the same browser task. Re-granting allows new events but must not
-revive the revoked event. This regression requires the locally corrected SDK
-until that fix is published. Package tests additionally cover project-scoped
+revive the revoked event. The fix shipped in client 0.8.0, so the spec runs in
+the default suite. Package tests additionally cover project-scoped
 offline recovery, concurrent unload delivery, final in-flight flushes, anonymous
 request isolation, credential rotation, and transport cancellation.
 
@@ -523,7 +523,8 @@ If package configuration changes during development, restoration stops with a
 reconciliation error rather than overwriting those edits.
 
 Candidate regressions in `e2e/candidate` run only with local/tarball packages
-until their SDK fixes are published. The offline test closes two disconnected
-tabs, opens two new documents and checks that both stored event ids reach real
-ingest once and disappear from the durable journal. Published npm contracts
-remain executable independently.
+until their SDK fixes are published, then move into `e2e/`; published npm
+contracts remain executable independently. `e2e/offline-recovery.spec.ts`, promoted
+with client 0.8.0, closes two disconnected tabs, opens two new documents and
+checks that both stored event ids reach real ingest once and disappear from the
+durable journal; it skips without a reachable project.

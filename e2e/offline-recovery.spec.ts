@@ -1,12 +1,19 @@
 import { randomUUID } from "node:crypto";
 import { expect, test } from "@playwright/test";
-import { batches, waitForHydration } from "../fixtures";
-import { REOPT_SCENARIOS } from "../../lib/reopt/scenarios";
+import {
+  batches,
+  hasLiveTenant,
+  NO_LIVE_TENANT_REASON,
+  waitForHydration,
+} from "./fixtures";
+import { REOPT_SCENARIOS } from "../lib/reopt/scenarios";
 
 test("two offline tabs recover both events once after both documents close", async ({
   page,
   context,
 }) => {
+  // Recovery is only proven by accepted batches, which need a real project.
+  test.skip(!hasLiveTenant(), NO_LIVE_TENANT_REASON);
   const runId = randomUUID();
   const path = `/lab?demoRunId=${runId}`;
   await page.goto(path);
