@@ -14,8 +14,10 @@
  *   sourcemaps.*     defaults for `reopt-data sourcemap upload`
  *
  * What must NOT go here: keys or secrets. This file is committed. Credentials come from
- * REOPT_DATA_ORG_KEY / REOPT_DATA_PLATFORM_KEY / REOPT_DATA_CLIENT_ID + _SECRET in the
- * environment; the CLI refuses a config with unknown keys.
+ * the environment: REOPT_DATA_ORG_KEY (projects, events, project uploads),
+ * REOPT_DATA_CLIENT_ID + _SECRET (queries), and REOPT_DATA_MACHINE_CLIENT_ID +
+ * REOPT_CLIENT_PRIVATE_KEY_JWK (organization and platform operations). The CLI
+ * refuses a config with unknown keys.
  *
  * Change it with `reopt-data link --…` (merges) or by editing; check with
  * `reopt-data config show`. Precedence: explicit flag > environment > this file.

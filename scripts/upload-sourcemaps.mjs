@@ -10,10 +10,11 @@
 import { spawnSync } from "node:child_process";
 
 const env = process.env;
+// A project upload authenticates with the organization key only; data-cli
+// 0.2.0 no longer reads REOPT_DATA_PLATFORM_KEY, so counting it would turn a
+// keyless build into a failing real upload.
 const hasCredentials = Boolean(
-  env.REOPT_DATA_ORG_KEY ||
-  env.REOPT_DATA_API_KEY ||
-  env.REOPT_DATA_PLATFORM_KEY,
+  env.REOPT_DATA_ORG_KEY || env.REOPT_DATA_API_KEY,
 );
 const deleteMaps = env.REOPT_DATA_DELETE_MAPS === "1";
 
