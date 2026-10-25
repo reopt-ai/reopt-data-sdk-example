@@ -42,10 +42,7 @@ export interface AnalyticsProviderProps {
   children: ReactNode;
 }
 
-export type AnalyticsTransport = Pick<ReoptClientConfig, "fetch"> & {
-  /** Available in the lifecycle-aware client release used by local SDK development. */
-  observe?: (observation: unknown) => void;
-};
+export type AnalyticsTransport = Pick<ReoptClientConfig, "fetch" | "observe">;
 
 export function AnalyticsProvider(props: AnalyticsProviderProps) {
   return <AnalyticsProviderWithTransport {...props} />;
@@ -61,13 +58,6 @@ export function AnalyticsProviderWithTransport({
   transport?: AnalyticsTransport;
   replayAssets?: readonly { url: string; dataUrl: string }[];
 }) {
-  // Keep the optional workspace capability compatible with older npm SDK types.
-  const replayOptions = {
-    sessionReplay: {
-      enabled: config.flags.sessionReplay,
-      ...(replayAssets ? { publicAssets: replayAssets } : {}),
-    },
-  };
   const clientConfig: ReoptClientConfig = {
     // A missing write key is a supported state, not a crash: the SDK warns once
     // and every call becomes a no-op. The shop must not care.
@@ -76,7 +66,10 @@ export function AnalyticsProviderWithTransport({
     normalizePath,
     ...transport,
     debug: config.flags.debug,
-    ...replayOptions,
+    sessionReplay: {
+      enabled: config.flags.sessionReplay,
+      ...(replayAssets ? { publicAssets: replayAssets } : {}),
+    },
     capture: {
       // `<ReoptPageView />` owns page views when it is mounted. With the toggle
       // off, nothing sends one automatically and the pages do it themselves.

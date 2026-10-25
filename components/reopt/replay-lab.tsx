@@ -17,13 +17,6 @@ export function ReplayLab({ flags }: { flags: Flags }) {
     () => true,
     () => false,
   );
-  // Keep npm mode buildable until the next client release. Capability detection
-  // is confined to this lab; the storefront uses the published SDK unchanged.
-  const replayClient = client as typeof client & {
-    flushReplay?: () => Promise<void>;
-    setConsent: (category: "replay", allowed: boolean) => void;
-  };
-  const supported = hydrated && typeof replayClient?.flushReplay === "function";
   const [consented, setConsented] = useState(false);
   const [status, setStatus] = useState(
     "No recording consent granted in this lab.",
@@ -50,16 +43,10 @@ export function ReplayLab({ flags }: { flags: Flags }) {
             Enable replay SDK and reload
           </Button>
         )}
-        {flags.sessionReplay && !supported && (
-          <output>
-            The installed npm release does not include replay yet. Use the
-            repository's local SDK development loop.
-          </output>
-        )}
         <div className="flex flex-wrap gap-2">
           <Button
             data-testid="replay-consent"
-            disabled={!flags.sessionReplay || !supported || consented}
+            disabled={!flags.sessionReplay || !hydrated || consented}
             onClick={async () => {
               if (!client) return;
               const id = crypto.randomUUID();
@@ -70,7 +57,7 @@ export function ReplayLab({ flags }: { flags: Flags }) {
                 properties: { replay_run_id: id },
               });
               await client.flush();
-              replayClient?.setConsent("replay", true);
+              client.setConsent("replay", true);
               setConsented(true);
               setStatus(
                 "Consent granted. Recording waits for the project's sampling decision and an active analytics session.",
@@ -82,9 +69,9 @@ export function ReplayLab({ flags }: { flags: Flags }) {
           <Button
             data-testid="replay-stop"
             variant="secondary"
-            disabled={!supported}
+            disabled={!hydrated}
             onClick={() => {
-              replayClient?.setConsent("replay", false);
+              client?.setConsent("replay", false);
               setConsented(false);
               setStatus(
                 "Consent withdrawn. Capture stopped and unsent replay data discarded.",
@@ -96,10 +83,10 @@ export function ReplayLab({ flags }: { flags: Flags }) {
           <Button
             data-testid="replay-flush"
             variant="secondary"
-            disabled={!supported}
+            disabled={!hydrated}
             onClick={async () => {
               await client?.flush();
-              await replayClient?.flushReplay?.();
+              await client?.flushReplay();
               setStatus(
                 "Flush attempted. Check the replay requests for acceptance; retries and sampling still apply.",
               );

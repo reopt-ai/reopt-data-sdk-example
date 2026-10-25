@@ -13,15 +13,9 @@ const ReplayAnalyticsProvider = dynamic(
   () => import("./replay-analytics-provider"),
 );
 
-const observer = (
-  devtools as typeof devtools & {
-    observe?: (observation: unknown) => void;
-  }
-).observe;
-
 const DIAGNOSTIC_TRANSPORT: AnalyticsTransport = {
   fetch: devtools.fetch,
-  ...(observer ? { observe: observer } : {}),
+  observe: devtools.observe,
 };
 
 /** Adds recorder hooks only for an explicitly diagnostic render. */
